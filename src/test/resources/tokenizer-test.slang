@@ -6,3 +6,7 @@ pi
 (* 3.14 (+ 1 1))
 (some #macro)
 'quoted
+{some set}
+[some vector]
+{""}
+[""]

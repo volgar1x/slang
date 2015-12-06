@@ -6,6 +6,10 @@ package slang.tokenizer;
 public enum ConstToken implements TokenInterface {
     START_LIST,
     END_LIST,
+    START_SET,
+    END_SET,
+    START_VECTOR,
+    END_VECTOR,
     QUOTE,
     UNQUOTE,
     DOUBLE_QUOTE,

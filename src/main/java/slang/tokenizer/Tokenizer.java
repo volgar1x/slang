@@ -73,6 +73,10 @@ public final class Tokenizer implements Iterator<TokenInterface> {
             case -1:   return ConstToken.EOF;
             case '(':  return ConstToken.START_LIST;
             case ')':  return ConstToken.END_LIST;
+            case '{':  return ConstToken.START_SET;
+            case '}':  return ConstToken.END_SET;
+            case '[':  return ConstToken.START_VECTOR;
+            case ']':  return ConstToken.END_VECTOR;
             case '\'': return ConstToken.QUOTE;
             case '#':  return ConstToken.UNQUOTE;
 
@@ -97,6 +101,8 @@ public final class Tokenizer implements Iterator<TokenInterface> {
         switch (chr) {
             case -1:  return ConstToken.EOF;
             case ')': return ConstToken.END_LIST;
+            case '}': return ConstToken.END_SET;
+            case ']': return ConstToken.END_VECTOR;
             default:  return null;
         }
     }

@@ -64,6 +64,28 @@ public class TokenizerTest {
         assertEquals(ConstToken.QUOTE, tokenizer.next());
         assertEquals(Token.of("quoted"), tokenizer.next());
 
+        assertEquals(ConstToken.START_SET, tokenizer.next());
+        assertEquals(Token.of("some"), tokenizer.next());
+        assertEquals(Token.of("set"), tokenizer.next());
+        assertEquals(ConstToken.END_SET, tokenizer.next());
+
+        assertEquals(ConstToken.START_VECTOR, tokenizer.next());
+        assertEquals(Token.of("some"), tokenizer.next());
+        assertEquals(Token.of("vector"), tokenizer.next());
+        assertEquals(ConstToken.END_VECTOR, tokenizer.next());
+
+        assertEquals(ConstToken.START_SET, tokenizer.next());
+        assertEquals(ConstToken.DOUBLE_QUOTE, tokenizer.next());
+        assertEquals(Token.of(""), tokenizer.next());
+        assertEquals(ConstToken.DOUBLE_QUOTE, tokenizer.next());
+        assertEquals(ConstToken.END_SET, tokenizer.next());
+
+        assertEquals(ConstToken.START_VECTOR, tokenizer.next());
+        assertEquals(ConstToken.DOUBLE_QUOTE, tokenizer.next());
+        assertEquals(Token.of(""), tokenizer.next());
+        assertEquals(ConstToken.DOUBLE_QUOTE, tokenizer.next());
+        assertEquals(ConstToken.END_VECTOR, tokenizer.next());
+
         assertEquals(ConstToken.EOF, tokenizer.next());
     }
 }
