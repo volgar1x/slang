@@ -16,23 +16,31 @@ public final class Stdlib {
     private Stdlib() {}
 
     public static void load(Interpreter interpreter) {
-        interpreter.register("print", (FunctionInterface) Stdlib::print);
-        interpreter.register("println", (FunctionInterface) Stdlib::println);
-        interpreter.register("readln", (FunctionInterface) Stdlib::readln);
-        interpreter.register("let", (FunctionInterface) Stdlib::let);
-        interpreter.register("!", (FunctionInterface) Stdlib::not);
-        interpreter.register("=", (FunctionInterface) Stdlib::equals);
-        interpreter.register("!=", (FunctionInterface) Stdlib::nequals);
-        interpreter.register("+", (FunctionInterface) Stdlib::plus);
-        interpreter.register("-", (FunctionInterface) Stdlib::minus);
-        interpreter.register("*", (FunctionInterface) Stdlib::times);
-        interpreter.register("**", (FunctionInterface) Stdlib::pow);
-        interpreter.register("/", (FunctionInterface) Stdlib::div);
-        interpreter.register("%", (FunctionInterface) Stdlib::rem);
-        interpreter.register("sqrt", (FunctionInterface) Stdlib::sqrt);
-//        interpreter.register("cos", (FunctionInterface) Stdlib::cos);
-//        interpreter.register("sin", (FunctionInterface) Stdlib::sin);
-//        interpreter.register("tan", (FunctionInterface) Stdlib::tan);
+        interpreter.register("print", eval(Stdlib::print));
+        interpreter.register("println", eval(Stdlib::println));
+        interpreter.register("readln", eval(Stdlib::readln));
+        interpreter.register("let", uneval(Stdlib::let));
+        interpreter.register("!", eval(Stdlib::not));
+        interpreter.register("=", eval(Stdlib::equals));
+        interpreter.register("!=", eval(Stdlib::nequals));
+        interpreter.register("+", eval(Stdlib::plus));
+        interpreter.register("-", eval(Stdlib::minus));
+        interpreter.register("*", eval(Stdlib::times));
+        interpreter.register("**", eval(Stdlib::pow));
+        interpreter.register("/", eval(Stdlib::div));
+        interpreter.register("%", eval(Stdlib::rem));
+        interpreter.register("sqrt", eval(Stdlib::sqrt));
+//        interpreter.register("cos", eval(Stdlib::cos));
+//        interpreter.register("sin", eval(Stdlib::sin));
+//        interpreter.register("tan", eval(Stdlib::tan));
+    }
+    
+    private static FunctionInterface uneval(FunctionInterface function) {
+        return function;
+    }
+    
+    private static FunctionInterface eval(FunctionInterface function) {
+        return (context, arguments) -> function.call(context, arguments.map(context));
     }
 
     public static ExpressionInterface print(EvaluationContextInterface context, ListExpression list) {
