@@ -1,9 +1,28 @@
 package slang.expressions;
 
+import java.util.function.BiFunction;
+import java.util.function.UnaryOperator;
+
 /**
  * @author Antoine Chauvin
  */
 public abstract class ListExpression implements ManyExpressionInterface {
+    public abstract ExpressionInterface getHead();
+    public abstract ListExpression getTail();
+
+    @Override
+    public <R> R visit(Visitor<R> visitor) {
+        return visitor.visitList(this);
+    }
+
+    public ListExpression reverse() {
+        return foldl(NilExpression.NIL, Cons::new);
+    }
+
+    public ListExpression map(UnaryOperator<ExpressionInterface> function) {
+        return foldl((ListExpression) NilExpression.NIL, (x, acc) -> new Cons(function.apply(x), acc)).reverse();
+    }
+
     public static final class Cons extends ListExpression {
         private final ExpressionInterface head;
         private final ListExpression tail;
@@ -13,12 +32,19 @@ public abstract class ListExpression implements ManyExpressionInterface {
             this.tail = tail;
         }
 
+        @Override
         public ExpressionInterface getHead() {
             return head;
         }
 
+        @Override
         public ListExpression getTail() {
             return tail;
+        }
+
+        @Override
+        public <T> T foldl(T seed, BiFunction<ExpressionInterface, T, T> function) {
+            return tail.foldl(function.apply(head, seed), function);
         }
 
         @Override
@@ -53,7 +79,7 @@ public abstract class ListExpression implements ManyExpressionInterface {
 
         @Override
         public ListExpression build() {
-            return list;
+            return list.reverse();
         }
     }
 

@@ -15,6 +15,11 @@ public final class AtomExpression implements ExpressionInterface {
     }
 
     @Override
+    public <R> R visit(Visitor<R> visitor) {
+        return visitor.visitAtom(this);
+    }
+
+    @Override
     public String toString() {
         return "Atom{" +
                 "'" + atom + '\'' +

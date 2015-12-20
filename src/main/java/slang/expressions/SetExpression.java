@@ -3,6 +3,7 @@ package slang.expressions;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.BiFunction;
 
 /**
  * @author Antoine Chauvin
@@ -30,6 +31,20 @@ public final class SetExpression implements ManyExpressionInterface {
         public SetExpression build() {
             return new SetExpression(expressions);
         }
+    }
+
+    @Override
+    public <R> R visit(Visitor<R> visitor) {
+        return visitor.visitSet(this);
+    }
+
+    @Override
+    public <T> T foldl(T seed, BiFunction<ExpressionInterface, T, T> function) {
+        T acc = seed;
+        for (ExpressionInterface expression : expressions) {
+            acc = function.apply(expression, acc);
+        }
+        return acc;
     }
 
     @Override

@@ -15,6 +15,11 @@ public final class StringExpression implements ExpressionInterface {
     }
 
     @Override
+    public <R> R visit(Visitor<R> visitor) {
+        return visitor.visitString(this);
+    }
+
+    @Override
     public String toString() {
         return "String{" +
                 "'" + string + '\'' +

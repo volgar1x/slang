@@ -17,6 +17,11 @@ public final class IntegerExpression implements ExpressionInterface {
     }
 
     @Override
+    public <R> R visit(Visitor<R> visitor) {
+        return visitor.visitInteger(this);
+    }
+
+    @Override
     public String toString() {
         return "Integer{" +
                 integer +

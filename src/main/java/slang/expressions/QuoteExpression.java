@@ -15,6 +15,11 @@ public final class QuoteExpression implements ExpressionInterface {
     }
 
     @Override
+    public <R> R visit(Visitor<R> visitor) {
+        return visitor.visitQuote(this);
+    }
+
+    @Override
     public String toString() {
         return "Quote{" +
                 expression +

@@ -17,6 +17,11 @@ public final class DecimalExpression implements ExpressionInterface {
     }
 
     @Override
+    public <R> R visit(Visitor<R> visitor) {
+        return visitor.visitDecimal(this);
+    }
+
+    @Override
     public String toString() {
         return "Decimal{" +
                 decimal +

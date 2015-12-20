@@ -1,5 +1,8 @@
 package slang.expressions;
 
+import java.util.NoSuchElementException;
+import java.util.function.BiFunction;
+
 /**
  * @author Antoine Chauvin
  */
@@ -8,6 +11,26 @@ public final class NilExpression extends ListExpression {
 
     private NilExpression() {
 
+    }
+
+    @Override
+    public ExpressionInterface getHead() {
+        throw new NoSuchElementException();
+    }
+
+    @Override
+    public ListExpression getTail() {
+        return this;
+    }
+
+    @Override
+    public <T> T foldl(T seed, BiFunction<ExpressionInterface, T, T> function) {
+        return seed;
+    }
+
+    @Override
+    public <R> R visit(Visitor<R> visitor) {
+        return visitor.visitNil(this);
     }
 
     @Override

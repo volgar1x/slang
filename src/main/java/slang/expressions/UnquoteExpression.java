@@ -15,6 +15,11 @@ public final class UnquoteExpression implements ExpressionInterface {
     }
 
     @Override
+    public <R> R visit(Visitor<R> visitor) {
+        return visitor.visitUnquote(this);
+    }
+
+    @Override
     public String toString() {
         return "Unquote{" +
                 "'" + name + '\'' +

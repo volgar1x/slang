@@ -1,6 +1,7 @@
 package slang.expressions;
 
 import java.util.Arrays;
+import java.util.function.BiFunction;
 
 /**
  * @author Antoine Chauvin
@@ -41,6 +42,20 @@ public final class VectorExpression implements ManyExpressionInterface {
             System.arraycopy(this.expressions, 0, expressions, 0, count);
             return new VectorExpression(expressions);
         }
+    }
+
+    @Override
+    public <R> R visit(Visitor<R> visitor) {
+        return visitor.visitVector(this);
+    }
+
+    @Override
+    public <T> T foldl(T seed, BiFunction<ExpressionInterface, T, T> function) {
+        T acc = seed;
+        for (ExpressionInterface expression : expressions) {
+            acc = function.apply(expression, acc);
+        }
+        return acc;
     }
 
     @Override
