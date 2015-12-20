@@ -20,6 +20,7 @@ public final class Stdlib {
         interpreter.register("println", eval(Stdlib::println));
         interpreter.register("readln", eval(Stdlib::readln));
         interpreter.register("let", uneval(Stdlib::let));
+        interpreter.register("def", uneval(Stdlib::def));
         interpreter.register("!", eval(Stdlib::not));
         interpreter.register("=", eval(Stdlib::equals));
         interpreter.register("!=", eval(Stdlib::nequals));
@@ -77,6 +78,39 @@ public final class Stdlib {
 
         return operations.<ExpressionInterface>foldl(NilExpression.NIL,
                 (expression, lastResult) -> context.evaluate(expression));
+    }
+
+    public static ExpressionInterface def(EvaluationContextInterface parentContext, ListExpression list) {
+        String functionName = ((AtomExpression) list.getHead()).getAtom();
+        VectorExpression argumentNames = (VectorExpression) list.getTail().getHead();
+        ListExpression operations = list.getTail().getTail();
+
+        parentContext.register(functionName, new FunctionInterface() {
+            @Override
+            public String getFunctionName() {
+                return functionName;
+            }
+
+            @Override
+            public ExpressionInterface call(EvaluationContextInterface superContext, ListExpression arguments) {
+                EvaluationContextInterface functionContext = superContext.link();
+
+                final ListExpression[] holder = new ListExpression[]{arguments};
+                argumentNames.forEach(x -> {
+                    ListExpression cur = holder[0];
+
+                    String argumentName = ((AtomExpression) x).getAtom();
+                    ExpressionInterface argument = superContext.evaluate(cur.getHead());
+                    functionContext.register(argumentName, argument);
+
+                    holder[0] = cur.getTail();
+                });
+
+                return operations.foldl(null, (operation, lastResult) -> functionContext.evaluate(operation));
+            }
+        });
+
+        return list.getHead();
     }
 
     public static ExpressionInterface not(EvaluationContextInterface context, ListExpression list) {

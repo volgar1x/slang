@@ -8,7 +8,7 @@ public interface FunctionInterface extends ExpressionInterface {
     ExpressionInterface call(EvaluationContextInterface context, ListExpression arguments);
 
     default String getFunctionName() {
-        return "<function>";
+        return "undefined";
     }
 
     @Override

@@ -24,7 +24,7 @@ public enum Printer implements Visitor<String> {
 
     @Override
     public String visitFunction(FunctionInterface function) {
-        return function.getFunctionName();
+        return String.format("<function:%s>", function.getFunctionName());
     }
 
     @Override
