@@ -16,4 +16,15 @@ public enum ConstToken implements TokenInterface {
     EOF,
     ;
 
+    @Override
+    public String getValue() {
+        return name();
+    }
+
+    @Override
+    public void expect(TokenInterface token) {
+        if (token != this) {
+            throw new RuntimeException("unexpected token `" + name() + "'");
+        }
+    }
 }

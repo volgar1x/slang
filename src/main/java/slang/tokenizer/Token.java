@@ -17,6 +17,18 @@ public final class Token implements TokenInterface {
     }
 
     @Override
+    public String getValue() {
+        return value;
+    }
+
+    @Override
+    public void expect(TokenInterface token) {
+        if (!token.getValue().equals(this.value)) {
+            throw new RuntimeException("unexpected token `" + value + '"');
+        }
+    }
+
+    @Override
     public String toString() {
         return value;
     }
