@@ -80,7 +80,7 @@ public final class Tokenizer implements Iterator<TokenInterface> {
         int chr = skipWhitespaces(stream.read());
 
         while (chr == ';') {
-            chr = skipLine();
+            chr = skipWhitespaces(skipLine());
         }
 
         switch (chr) {
