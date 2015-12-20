@@ -44,9 +44,18 @@ public final class VectorExpression implements ManyExpressionInterface {
         }
     }
 
+    public int getLength() {
+        return expressions.length;
+    }
+
     @Override
     public <R> R visit(Visitor<R> visitor) {
         return visitor.visitVector(this);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return expressions.length <= 0;
     }
 
     @Override

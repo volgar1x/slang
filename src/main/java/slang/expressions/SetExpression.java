@@ -39,6 +39,11 @@ public final class SetExpression implements ManyExpressionInterface {
     }
 
     @Override
+    public boolean isEmpty() {
+        return expressions.isEmpty();
+    }
+
+    @Override
     public <T> T foldl(T seed, BiFunction<ExpressionInterface, T, T> function) {
         T acc = seed;
         for (ExpressionInterface expression : expressions) {

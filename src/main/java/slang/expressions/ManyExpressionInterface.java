@@ -15,6 +15,8 @@ public interface ManyExpressionInterface extends ExpressionInterface {
         ManyExpressionInterface build();
     }
 
+    boolean isEmpty();
+
     <T> T foldl(T seed, BiFunction<ExpressionInterface, T, T> function);
 
     default void forEach(Consumer<ExpressionInterface> function) {

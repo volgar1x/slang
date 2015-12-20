@@ -43,6 +43,11 @@ public abstract class ListExpression implements ManyExpressionInterface {
         }
 
         @Override
+        public boolean isEmpty() {
+            return false;
+        }
+
+        @Override
         public <T> T foldl(T seed, BiFunction<ExpressionInterface, T, T> function) {
             return tail.foldl(function.apply(head, seed), function);
         }

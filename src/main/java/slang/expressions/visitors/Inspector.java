@@ -19,7 +19,7 @@ public enum Inspector implements Visitor<String> {
 
     @Override
     public String visitDecimal(DecimalExpression decimal) {
-        return decimal.getDecimal().toString();
+        return decimal.asDecimal().toString();
     }
 
     @Override
@@ -29,7 +29,7 @@ public enum Inspector implements Visitor<String> {
 
     @Override
     public String visitInteger(IntegerExpression integer) {
-        return integer.getInteger().toString(10);
+        return integer.asInteger().toString(10);
     }
 
     @Override

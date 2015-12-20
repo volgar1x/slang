@@ -4,6 +4,8 @@ package slang.expressions;
  * @author Antoine Chauvin
  */
 public final class AtomExpression implements ExpressionInterface {
+    public static AtomExpression T = new AtomExpression("t");
+
     private final String atom;
 
     public AtomExpression(String atom) {

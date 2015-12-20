@@ -16,6 +16,8 @@ public enum InterpreterEvaluation implements EvaluationInterface {
             throw new IllegalStateException();
         } else if (expression instanceof AtomExpression) {
             return context.read(((AtomExpression) expression).getAtom());
+        } else if (expression == NilExpression.NIL) {
+            return NilExpression.NIL;
         } else if (expression instanceof ListExpression) {
             return evaluateFunctionCall(context, (ListExpression) expression);
         } else {

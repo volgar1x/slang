@@ -24,6 +24,11 @@ public final class NilExpression extends ListExpression {
     }
 
     @Override
+    public boolean isEmpty() {
+        return true;
+    }
+
+    @Override
     public <T> T foldl(T seed, BiFunction<ExpressionInterface, T, T> function) {
         return seed;
     }
