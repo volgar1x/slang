@@ -46,6 +46,16 @@ public final class Tokenizer implements Iterator<TokenInterface> {
         return chr;
     }
 
+    private int skipLine() throws IOException {
+        while (true) {
+            int chr = stream.read();
+            if (chr == '\n' || chr == -1) {
+                break;
+            }
+        }
+        return stream.read();
+    }
+
     private TokenInterface safeNext() throws IOException {
         if (!queued.isEmpty()) {
             return queued.removeFirst();
@@ -68,6 +78,10 @@ public final class Tokenizer implements Iterator<TokenInterface> {
         }
 
         int chr = skipWhitespaces(stream.read());
+
+        while (chr == ';') {
+            chr = skipLine();
+        }
 
         switch (chr) {
             case -1:   return ConstToken.EOF;
