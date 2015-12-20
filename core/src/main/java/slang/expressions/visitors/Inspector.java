@@ -20,7 +20,7 @@ public enum Inspector implements Visitor<String> {
 
     @Override
     public String visitAtom(AtomExpression atom) {
-        return atom.getAtom();
+        return (atom.isValue() ?  ":" : "") + atom.getAtom();
     }
 
     @Override

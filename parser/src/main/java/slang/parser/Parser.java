@@ -84,6 +84,8 @@ public final class Parser implements Iterator<ExpressionInterface> {
             return new IntegerExpression(new BigInteger(value, 10));
         } else if (isDecimal(value)) {
             return new DecimalExpression(new BigDecimal(value, MathContext.UNLIMITED));
+        } else if (value.startsWith(":")) {
+            return new AtomExpression(value.substring(1), true);
         }
         return new AtomExpression(value);
     }

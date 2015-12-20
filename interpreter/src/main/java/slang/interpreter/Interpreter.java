@@ -45,7 +45,7 @@ public final class Interpreter extends EvaluationContext implements Visitor<Expr
 
     @Override
     public ExpressionInterface visitAtom(AtomExpression atom) {
-        return read(atom.getAtom());
+        return atom.isValue() ? atom : read(atom.getAtom());
     }
 
     @Override

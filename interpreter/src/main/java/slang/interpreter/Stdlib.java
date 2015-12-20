@@ -2,6 +2,7 @@ package slang.interpreter;
 
 import slang.Pairs;
 import slang.expressions.*;
+import slang.expressions.visitors.Inspector;
 import slang.expressions.visitors.Printer;
 import slang.expressions.visitors.Truthy;
 
@@ -21,6 +22,7 @@ public final class Stdlib {
         interpreter.register("print", eval(Stdlib::print));
         interpreter.register("println", eval(Stdlib::println));
         interpreter.register("readln", eval(Stdlib::readln));
+        interpreter.register("inspect", eval(Stdlib::inspect));
         interpreter.register("let", uneval(Stdlib::let));
         interpreter.register("def", uneval(Stdlib::def));
         interpreter.register("!", eval(Stdlib::not));
@@ -66,6 +68,10 @@ public final class Stdlib {
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    public static ExpressionInterface inspect(EvaluationContextInterface context, ListExpression list) {
+        return new StringExpression(Inspector.inspect(list.getHead()));
     }
 
     public static ExpressionInterface let(EvaluationContextInterface superContext, ListExpression list) {

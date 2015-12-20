@@ -4,16 +4,26 @@ package slang.expressions;
  * @author Antoine Chauvin
  */
 public final class AtomExpression implements ExpressionInterface {
-    public static AtomExpression T = new AtomExpression("t");
+    public static final AtomExpression T = new AtomExpression("t");
 
     private final String atom;
+    private final boolean value;
 
     public AtomExpression(String atom) {
+        this(atom, false);
+    }
+
+    public AtomExpression(String atom, boolean value) {
         this.atom = atom;
+        this.value = value;
     }
 
     public String getAtom() {
         return atom;
+    }
+
+    public boolean isValue() {
+        return value;
     }
 
     @Override
