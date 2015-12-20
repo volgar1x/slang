@@ -2,3 +2,7 @@ apply plugin: 'java'
 apply plugin: 'application'
 
 mainClassName = 'slang.repl.App'
+
+dependencies {
+    compile project(':core')
+}
