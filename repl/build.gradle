@@ -4,5 +4,6 @@ apply plugin: 'application'
 mainClassName = 'slang.repl.App'
 
 dependencies {
-    compile project(':core')
+    compile project(':interpreter')
+    compile project(':parser')
 }
