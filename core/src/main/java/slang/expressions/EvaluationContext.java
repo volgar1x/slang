@@ -9,36 +9,45 @@ import java.util.NoSuchElementException;
 /**
  * @author Antoine Chauvin
  */
-public class RootEvaluationContext implements EvaluationContextInterface {
+public abstract class EvaluationContext implements EvaluationContextInterface {
     private final Map<String, ExpressionInterface> expressions = new HashMap<>();
-    private final EvaluationInterface evaluation;
+    private final EvaluationContextInterface parent;
     private final InputStream stdin;
     private final PrintStream stdout, stderr;
 
-    public RootEvaluationContext(EvaluationInterface evaluation, InputStream stdin, PrintStream stdout, PrintStream stderr) {
-        this.evaluation = evaluation;
+    public EvaluationContext(InputStream stdin, PrintStream stdout, PrintStream stderr) {
+        this.parent = null;
         this.stdin = stdin;
         this.stdout = stdout;
         this.stderr = stderr;
     }
 
-    @Override
-    public EvaluationInterface getEvaluation() {
-        return evaluation;
+    public EvaluationContext(EvaluationContextInterface parent) {
+        this.parent = parent;
+        this.stdin = null;
+        this.stdout = null;
+        this.stderr = null;
     }
 
     @Override
     public ExpressionInterface read(String identifier) {
         ExpressionInterface result = expressions.get(identifier);
         if (result == null) {
-            throw new NoSuchElementException(identifier);
+            if (parent == null) {
+                throw new NoSuchElementException(identifier);
+            }
+            return parent.read(identifier);
         }
         return result;
     }
 
     @Override
     public ExpressionInterface readMaybe(String identifier) {
-        return expressions.get(identifier);
+        ExpressionInterface result = expressions.get(identifier);
+        if (result == null && parent != null) {
+            return parent.readMaybe(identifier);
+        }
+        return result;
     }
 
     @Override
@@ -48,16 +57,16 @@ public class RootEvaluationContext implements EvaluationContextInterface {
 
     @Override
     public InputStream getStandardInput() {
-        return stdin;
+        return parent != null ? parent.getStandardInput() : stdin;
     }
 
     @Override
     public PrintStream getStandardOutput() {
-        return stdout;
+        return parent != null ? parent.getStandardOutput() : stdout;
     }
 
     @Override
     public PrintStream getStandardError() {
-        return stderr;
+        return parent != null ? parent.getStandardError() : stderr;
     }
 }

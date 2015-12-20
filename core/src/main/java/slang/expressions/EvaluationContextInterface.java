@@ -8,7 +8,8 @@ import java.util.function.UnaryOperator;
  * @author Antoine Chauvin
  */
 public interface EvaluationContextInterface extends UnaryOperator<ExpressionInterface> {
-    EvaluationInterface getEvaluation();
+    EvaluationContextInterface link();
+    ExpressionInterface evaluate(ExpressionInterface expression);
 
     ExpressionInterface read(String identifier);
     /** @nullable */
@@ -19,16 +20,8 @@ public interface EvaluationContextInterface extends UnaryOperator<ExpressionInte
     PrintStream getStandardOutput();
     PrintStream getStandardError();
 
-    default ExpressionInterface evaluate(ExpressionInterface expression) {
-        return getEvaluation().evaluate(this, expression);
-    }
-
     @Override
     default ExpressionInterface apply(ExpressionInterface expression) {
         return evaluate(expression);
-    }
-
-    default EvaluationContextInterface link() {
-        return new LinkedEvaluationContext(this);
     }
 }

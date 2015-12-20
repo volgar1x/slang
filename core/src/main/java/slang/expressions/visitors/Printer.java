@@ -13,6 +13,11 @@ public enum Printer implements Visitor<String> {
     }
 
     @Override
+    public String otherwise(ExpressionInterface expression) {
+        return "";
+    }
+
+    @Override
     public String visitAtom(AtomExpression atom) {
         return "'" + atom.getAtom();
     }

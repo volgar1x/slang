@@ -15,19 +15,15 @@ public enum Truthy implements Visitor<Boolean> {
         return INSTANCE.apply(expression);
     }
 
+
     @Override
-    public Boolean visitAtom(AtomExpression atom) {
+    public Boolean otherwise(ExpressionInterface expression) {
         return true;
     }
 
     @Override
     public Boolean visitDecimal(DecimalExpression decimal) {
         return decimal.asDecimal().compareTo(BigDecimal.ZERO) != 0;
-    }
-
-    @Override
-    public Boolean visitFunction(FunctionInterface function) {
-        return true;
     }
 
     @Override
@@ -46,11 +42,6 @@ public enum Truthy implements Visitor<Boolean> {
     }
 
     @Override
-    public Boolean visitQuote(QuoteExpression quote) {
-        return true;
-    }
-
-    @Override
     public Boolean visitSet(SetExpression set) {
         return !set.isEmpty();
     }
@@ -58,11 +49,6 @@ public enum Truthy implements Visitor<Boolean> {
     @Override
     public Boolean visitString(StringExpression string) {
         return !string.getString().isEmpty();
-    }
-
-    @Override
-    public Boolean visitUnquote(UnquoteExpression unquote) {
-        return true;
     }
 
     @Override

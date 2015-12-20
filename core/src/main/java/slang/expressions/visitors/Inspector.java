@@ -12,6 +12,12 @@ public enum Inspector implements Visitor<String> {
         return expression.visit(INSTANCE);
     }
 
+
+    @Override
+    public String otherwise(ExpressionInterface expression) {
+        throw new IllegalArgumentException();
+    }
+
     @Override
     public String visitAtom(AtomExpression atom) {
         return atom.getAtom();
