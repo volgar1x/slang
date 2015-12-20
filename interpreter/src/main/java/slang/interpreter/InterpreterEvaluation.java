@@ -1,6 +1,7 @@
 package slang.interpreter;
 
 import slang.expressions.*;
+import slang.expressions.visitors.BaseVisitor;
 
 /**
  * @author Antoine Chauvin
@@ -10,26 +11,35 @@ public enum InterpreterEvaluation implements EvaluationInterface {
 
     @Override
     public ExpressionInterface evaluate(EvaluationContextInterface context, ExpressionInterface expression) {
-        if (expression instanceof QuoteExpression) {
-            return ((QuoteExpression) expression).getExpression();
-        } else if (expression instanceof UnquoteExpression) {
-            throw new IllegalStateException();
-        } else if (expression instanceof AtomExpression) {
-            return context.read(((AtomExpression) expression).getAtom());
-        } else if (expression == NilExpression.NIL) {
-            return NilExpression.NIL;
-        } else if (expression instanceof ListExpression) {
-            return evaluateFunctionCall(context, (ListExpression) expression);
-        } else {
-            return expression;
-        }
-    }
+        return expression.visit(new BaseVisitor<ExpressionInterface>() {
+            @Override
+            public ExpressionInterface visitQuote(QuoteExpression quote) {
+                return quote.getExpression();
+            }
 
-    private ExpressionInterface evaluateFunctionCall(EvaluationContextInterface context, ListExpression list) {
-        AtomExpression functionIdentifier = (AtomExpression) list.getHead();
-        ListExpression functionArguments = list.getTail();
+            @Override
+            public ExpressionInterface visitUnquote(UnquoteExpression unquote) {
+                throw new IllegalStateException();
+            }
 
-        FunctionInterface function = (FunctionInterface) context.read(functionIdentifier.getAtom());
-        return function.call(context, functionArguments);
+            @Override
+            public ExpressionInterface visitAtom(AtomExpression atom) {
+                return context.read(atom.getAtom());
+            }
+
+            @Override
+            public ExpressionInterface visitList(ListExpression list) {
+                AtomExpression functionIdentifier = (AtomExpression) list.getHead();
+                ListExpression functionArguments = list.getTail();
+
+                FunctionInterface function = (FunctionInterface) context.read(functionIdentifier.getAtom());
+                return function.call(context, functionArguments);
+            }
+
+            @Override
+            public ExpressionInterface otherwise(ExpressionInterface expression) {
+                return expression;
+            }
+        });
     }
 }

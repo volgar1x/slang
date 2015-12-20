@@ -8,6 +8,10 @@ import slang.expressions.*;
 public abstract class BaseVisitor<R> implements Visitor<R> {
     public abstract R otherwise(ExpressionInterface expression);
 
+    public R visitMany(ManyExpressionInterface many) {
+        return otherwise(many);
+    }
+
     @Override
     public R visitAtom(AtomExpression atom) {
         return otherwise(atom);
@@ -30,7 +34,7 @@ public abstract class BaseVisitor<R> implements Visitor<R> {
 
     @Override
     public R visitList(ListExpression list) {
-        return otherwise(list);
+        return visitMany(list);
     }
 
     @Override
@@ -45,7 +49,7 @@ public abstract class BaseVisitor<R> implements Visitor<R> {
 
     @Override
     public R visitSet(SetExpression set) {
-        return otherwise(set);
+        return visitMany(set);
     }
 
     @Override
@@ -60,6 +64,6 @@ public abstract class BaseVisitor<R> implements Visitor<R> {
 
     @Override
     public R visitVector(VectorExpression vector) {
-        return otherwise(vector);
+        return visitMany(vector);
     }
 }

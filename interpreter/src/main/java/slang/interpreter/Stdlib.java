@@ -8,6 +8,8 @@ import slang.expressions.visitors.Truthy;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Antoine Chauvin
@@ -82,35 +84,16 @@ public final class Stdlib {
 
     public static ExpressionInterface def(EvaluationContextInterface parentContext, ListExpression list) {
         String functionName = ((AtomExpression) list.getHead()).getAtom();
-        VectorExpression argumentNames = (VectorExpression) list.getTail().getHead();
+        VectorExpression argumentVector = (VectorExpression) list.getTail().getHead();
         ListExpression operations = list.getTail().getTail();
 
-        parentContext.register(functionName, new FunctionInterface() {
-            @Override
-            public String getFunctionName() {
-                return functionName;
-            }
+        List<String> argumentNames = new ArrayList<>(argumentVector.getLength());
+        argumentVector.forEach(expression ->
+                argumentNames.add(((AtomExpression) expression).getAtom()));
 
-            @Override
-            public ExpressionInterface call(EvaluationContextInterface superContext, ListExpression arguments) {
-                EvaluationContextInterface functionContext = superContext.link();
-
-                final ListExpression[] holder = new ListExpression[]{arguments};
-                argumentNames.forEach(x -> {
-                    ListExpression cur = holder[0];
-
-                    String argumentName = ((AtomExpression) x).getAtom();
-                    ExpressionInterface argument = superContext.evaluate(cur.getHead());
-                    functionContext.register(argumentName, argument);
-
-                    holder[0] = cur.getTail();
-                });
-
-                return operations.foldl(null, (operation, lastResult) -> functionContext.evaluate(operation));
-            }
-        });
-
-        return list.getHead();
+        SlangFunction function = new SlangFunction(functionName, argumentNames, operations);
+        parentContext.register(functionName, function);
+        return function;
     }
 
     public static ExpressionInterface not(EvaluationContextInterface context, ListExpression list) {

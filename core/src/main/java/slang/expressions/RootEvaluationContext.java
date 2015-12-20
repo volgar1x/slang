@@ -37,6 +37,11 @@ public class RootEvaluationContext implements EvaluationContextInterface {
     }
 
     @Override
+    public ExpressionInterface readMaybe(String identifier) {
+        return expressions.get(identifier);
+    }
+
+    @Override
     public void register(String identifier, ExpressionInterface expression) {
         expressions.put(identifier, expression);
     }

@@ -26,6 +26,15 @@ public class LinkedEvaluationContext implements EvaluationContextInterface {
     }
 
     @Override
+    public ExpressionInterface readMaybe(String identifier) {
+        ExpressionInterface expression = expressions.get(identifier);
+        if (expression == null) {
+            return superContext.readMaybe(identifier);
+        }
+        return expression;
+    }
+
+    @Override
     public void register(String identifier, ExpressionInterface expression) {
         expressions.put(identifier, expression);
     }

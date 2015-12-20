@@ -4,10 +4,12 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * @author Antoine Chauvin
  */
+@SuppressWarnings("Convert2streamapi")
 public final class SetExpression implements ManyExpressionInterface {
     private final Set<ExpressionInterface> expressions;
 
@@ -50,6 +52,15 @@ public final class SetExpression implements ManyExpressionInterface {
             acc = function.apply(expression, acc);
         }
         return acc;
+    }
+
+    @Override
+    public ManyExpressionInterface map(Function<ExpressionInterface, ExpressionInterface> function) {
+        Set<ExpressionInterface> result = new HashSet<>();
+        for (ExpressionInterface expression : expressions) {
+            result.add(function.apply(expression));
+        }
+        return new SetExpression(result);
     }
 
     @Override

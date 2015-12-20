@@ -1,7 +1,7 @@
 package slang.expressions;
 
 import java.util.function.BiFunction;
-import java.util.function.UnaryOperator;
+import java.util.function.Function;
 
 /**
  * @author Antoine Chauvin
@@ -19,7 +19,7 @@ public abstract class ListExpression implements ManyExpressionInterface {
         return foldl(NilExpression.NIL, Cons::new);
     }
 
-    public ListExpression map(UnaryOperator<ExpressionInterface> function) {
+    public ListExpression map(Function<ExpressionInterface, ExpressionInterface> function) {
         return foldl((ListExpression) NilExpression.NIL, (x, acc) -> new Cons(function.apply(x), acc)).reverse();
     }
 

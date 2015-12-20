@@ -11,6 +11,8 @@ public interface EvaluationContextInterface extends UnaryOperator<ExpressionInte
     EvaluationInterface getEvaluation();
 
     ExpressionInterface read(String identifier);
+    /** @nullable */
+    ExpressionInterface readMaybe(String identifier);
     void register(String identifier, ExpressionInterface expression);
 
     InputStream getStandardInput();

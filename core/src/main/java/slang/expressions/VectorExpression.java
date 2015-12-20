@@ -2,6 +2,7 @@ package slang.expressions;
 
 import java.util.Arrays;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * @author Antoine Chauvin
@@ -11,6 +12,10 @@ public final class VectorExpression implements ManyExpressionInterface {
 
     public VectorExpression(ExpressionInterface[] expressions) {
         this.expressions = expressions;
+    }
+
+    public int getLength() {
+        return expressions.length;
     }
 
     public static class Builder implements ManyExpressionInterface.Builder {
@@ -44,10 +49,6 @@ public final class VectorExpression implements ManyExpressionInterface {
         }
     }
 
-    public int getLength() {
-        return expressions.length;
-    }
-
     @Override
     public <R> R visit(Visitor<R> visitor) {
         return visitor.visitVector(this);
@@ -65,6 +66,15 @@ public final class VectorExpression implements ManyExpressionInterface {
             acc = function.apply(expression, acc);
         }
         return acc;
+    }
+
+    @Override
+    public ManyExpressionInterface map(Function<ExpressionInterface, ExpressionInterface> function) {
+        ExpressionInterface[] result = new ExpressionInterface[expressions.length];
+        for (int i = 0; i < expressions.length; i++) {
+            result[i] = function.apply(expressions[i]);
+        }
+        return new VectorExpression(result);
     }
 
     @Override

@@ -44,7 +44,7 @@ public enum Inspector implements Visitor<String> {
 
     @Override
     public String visitQuote(QuoteExpression quote) {
-        return "'" + quote.visit(this);
+        return "'" + quote.getExpression().visit(this);
     }
 
     @Override
