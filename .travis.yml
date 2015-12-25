@@ -4,4 +4,4 @@ env:
   matrix:
   - TERM=dumb
 after_success:
-  - ./gradlew jacocoTestReport coveralls
+  - ./gradlew jacocoRootReport coveralls
