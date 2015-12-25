@@ -7,17 +7,20 @@ import java.util.List;
  * @author Antoine Chauvin
  */
 public class SlangFunction implements FunctionInterface {
+
     private final String functionName;
     private final List<String> argumentNames;
     private final ListExpression operations;
+    private final Definition definition;
 
-    public SlangFunction(String functionName, List<String> argumentNames, ListExpression operations) {
+    public SlangFunction(String functionName, List<String> argumentNames, ListExpression operations, Definition definition) {
         this.functionName = functionName;
         this.argumentNames = argumentNames;
         this.operations = operations;
+        this.definition = definition;
     }
 
-    public static SlangFunction fromList(ListExpression list) {
+    public static SlangFunction fromList(ListExpression list, Definition definition) {
         String functionName = ((AtomExpression) list.getHead()).getAtom();
         VectorExpression argumentVector = (VectorExpression) list.getTail().getHead();
         ListExpression operations = list.getTail().getTail();
@@ -26,12 +29,20 @@ public class SlangFunction implements FunctionInterface {
         argumentVector.forEach(expression ->
                 argumentNames.add(((AtomExpression) expression).getAtom()));
 
-        return new SlangFunction(functionName, argumentNames, operations);
+        return new SlangFunction(functionName, argumentNames, operations, definition);
+    }
+
+    public static SlangFunction fromList(ListExpression list) {
+        return fromList(list, Definition.RUN_TIME);
     }
 
     @Override
     public String getFunctionName() {
         return functionName;
+    }
+
+    public Definition getDefinition() {
+        return definition;
     }
 
     @Override

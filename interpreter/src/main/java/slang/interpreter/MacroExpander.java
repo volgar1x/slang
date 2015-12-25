@@ -12,15 +12,21 @@ public final class MacroExpander extends EvaluationContext implements Visitor<Ex
     public MacroExpander(InputStream stdin, PrintStream stdout, PrintStream stderr) {
         super(stdin, stdout, stderr);
 
-        register("defmacro", (FunctionInterface) (context, arguments) -> {
-            SlangFunction function = SlangFunction.fromList(arguments);
+        register("defmacro", new NativeFunction("defmacro", FunctionInterface.Definition.COMPILE_TIME, (context, arguments) -> {
+            SlangFunction function = SlangFunction.fromList(arguments, FunctionInterface.Definition.COMPILE_TIME);
             register(function.getFunctionName(), function);
             return NilExpression.NIL;
-        });
+        }));
     }
 
     public MacroExpander(EvaluationContextInterface parent) {
         super(parent);
+
+        register("defmacro", new NativeFunction("defmacro", FunctionInterface.Definition.COMPILE_TIME, (context, arguments) -> {
+            SlangFunction function = SlangFunction.fromList(arguments, FunctionInterface.Definition.COMPILE_TIME);
+            register(function.getFunctionName(), function);
+            return NilExpression.NIL;
+        }));
     }
 
     @Override
@@ -54,12 +60,6 @@ public final class MacroExpander extends EvaluationContext implements Visitor<Ex
     }
 
     @Override
-    public ExpressionInterface visitFunction(FunctionInterface function) {
-        register(function.getFunctionName(), function);
-        return NilExpression.NIL;
-    }
-
-    @Override
     public ExpressionInterface visitList(ListExpression list) {
         if (!(list.getHead() instanceof AtomExpression)) {
             return visitMany(list);
@@ -68,7 +68,7 @@ public final class MacroExpander extends EvaluationContext implements Visitor<Ex
         String functionName = ((AtomExpression) list.getHead()).getAtom();
 
         ExpressionInterface maybe = readMaybe(functionName);
-        if (maybe == null || !(maybe instanceof FunctionInterface)) {
+        if (maybe == null || !(maybe instanceof FunctionInterface) || ((FunctionInterface) maybe).getDefinition() != FunctionInterface.Definition.COMPILE_TIME) {
             return visitMany(list);
         }
         FunctionInterface function = (FunctionInterface) maybe;
@@ -89,6 +89,11 @@ public final class MacroExpander extends EvaluationContext implements Visitor<Ex
             @Override
             public ExpressionInterface visitMany(ManyExpressionInterface many) {
                 return many.map(this);
+            }
+
+            @Override
+            public ExpressionInterface visitQuote(QuoteExpression quote) {
+                return new QuoteExpression(quote.getExpression().visit(this));
             }
 
             @Override
