@@ -6,4 +6,5 @@ mainClassName = 'slang.repl.App'
 dependencies {
     compile project(':interpreter')
     compile project(':parser')
+    compile project(':assert')
 }

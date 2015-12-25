@@ -1,5 +1,6 @@
 package slang.repl;
 
+import slang.SlangAssert;
 import slang.interpreter.Interpreter;
 
 /**
@@ -9,6 +10,8 @@ public final class App {
     private App() {}
 
     public static void main(String[] args) {
-        new REPL(new Interpreter(System.in, System.out, System.err)).run();
+        Interpreter interpreter = new Interpreter(System.in, System.out, System.err);
+        SlangAssert.load(interpreter);
+        new REPL(interpreter).run();
     }
 }
