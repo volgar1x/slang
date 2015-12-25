@@ -1,5 +1,6 @@
 package slang.expressions;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,6 +15,18 @@ public class SlangFunction implements FunctionInterface {
         this.functionName = functionName;
         this.argumentNames = argumentNames;
         this.operations = operations;
+    }
+
+    public static SlangFunction fromList(ListExpression list) {
+        String functionName = ((AtomExpression) list.getHead()).getAtom();
+        VectorExpression argumentVector = (VectorExpression) list.getTail().getHead();
+        ListExpression operations = list.getTail().getTail();
+
+        List<String> argumentNames = new ArrayList<>(argumentVector.getLength());
+        argumentVector.forEach(expression ->
+                argumentNames.add(((AtomExpression) expression).getAtom()));
+
+        return new SlangFunction(functionName, argumentNames, operations);
     }
 
     @Override

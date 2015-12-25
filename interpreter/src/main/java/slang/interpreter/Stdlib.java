@@ -9,8 +9,6 @@ import slang.expressions.visitors.Truthy;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Antoine Chauvin
@@ -24,10 +22,15 @@ public final class Stdlib {
         interpreter.register("readln", eval(Stdlib::readln));
         interpreter.register("inspect", eval(Stdlib::inspect));
         interpreter.register("let", uneval(Stdlib::let));
+        interpreter.register("case", uneval(Stdlib::case_));
         interpreter.register("def", uneval(Stdlib::def));
-        interpreter.register("!", eval(Stdlib::not));
+        interpreter.register("not", eval(Stdlib::not));
         interpreter.register("=", eval(Stdlib::equals));
         interpreter.register("!=", eval(Stdlib::nequals));
+        interpreter.register(">", eval(Stdlib::gt));
+        interpreter.register(">=", eval(Stdlib::gte));
+        interpreter.register("<", eval(Stdlib::lt));
+        interpreter.register("<=", eval(Stdlib::lte));
         interpreter.register("+", eval(Stdlib::plus));
         interpreter.register("-", eval(Stdlib::minus));
         interpreter.register("*", eval(Stdlib::times));
@@ -88,17 +91,24 @@ public final class Stdlib {
                 (expression, lastResult) -> context.evaluate(expression));
     }
 
+    public static ExpressionInterface case_(EvaluationContextInterface context, ListExpression list) {
+        for (ListExpression rest = list; !rest.isEmpty(); rest = rest.getTail()) {
+            ListExpression cur = (ListExpression) rest.getHead();
+
+            ExpressionInterface condition = cur.getHead();
+            ExpressionInterface operation = cur.getTail().getHead();
+
+            if (Truthy.truthy(context.evaluate(condition))) {
+                return context.evaluate(operation);
+            }
+        }
+
+        return NilExpression.NIL;
+    }
+
     public static ExpressionInterface def(EvaluationContextInterface parentContext, ListExpression list) {
-        String functionName = ((AtomExpression) list.getHead()).getAtom();
-        VectorExpression argumentVector = (VectorExpression) list.getTail().getHead();
-        ListExpression operations = list.getTail().getTail();
-
-        List<String> argumentNames = new ArrayList<>(argumentVector.getLength());
-        argumentVector.forEach(expression ->
-                argumentNames.add(((AtomExpression) expression).getAtom()));
-
-        SlangFunction function = new SlangFunction(functionName, argumentNames, operations);
-        parentContext.register(functionName, function);
+        SlangFunction function = SlangFunction.fromList(list);
+        parentContext.register(function.getFunctionName(), function);
         return function;
     }
 
@@ -112,6 +122,50 @@ public final class Stdlib {
 
     public static ExpressionInterface nequals(EvaluationContextInterface context, ListExpression list) {
         return BooleanExpression.from(!list.getHead().equals(list.getTail().getHead()));
+    }
+
+    public static ExpressionInterface gt(EvaluationContextInterface context, ListExpression list) {
+        ExpressionInterface lhs = list.getHead();
+        ExpressionInterface rhs = list.getTail().getHead();
+
+        if (lhs instanceof Comparable) {
+            //noinspection unchecked
+            return BooleanExpression.from(((Comparable) lhs).compareTo(rhs) > 0);
+        }
+        return NilExpression.NIL;
+    }
+
+    public static ExpressionInterface gte(EvaluationContextInterface context, ListExpression list) {
+        ExpressionInterface lhs = list.getHead();
+        ExpressionInterface rhs = list.getTail().getHead();
+
+        if (lhs instanceof Comparable) {
+            //noinspection unchecked
+            return BooleanExpression.from(((Comparable) lhs).compareTo(rhs) >= 0);
+        }
+        return NilExpression.NIL;
+    }
+
+    public static ExpressionInterface lt(EvaluationContextInterface context, ListExpression list) {
+        ExpressionInterface lhs = list.getHead();
+        ExpressionInterface rhs = list.getTail().getHead();
+
+        if (lhs instanceof Comparable) {
+            //noinspection unchecked
+            return BooleanExpression.from(((Comparable) lhs).compareTo(rhs) < 0);
+        }
+        return NilExpression.NIL;
+    }
+
+    public static ExpressionInterface lte(EvaluationContextInterface context, ListExpression list) {
+        ExpressionInterface lhs = list.getHead();
+        ExpressionInterface rhs = list.getTail().getHead();
+
+        if (lhs instanceof Comparable) {
+            //noinspection unchecked
+            return BooleanExpression.from(((Comparable) lhs).compareTo(rhs) <= 0);
+        }
+        return NilExpression.NIL;
     }
 
     public static NumExpression plus(EvaluationContextInterface context, ListExpression list) {
@@ -151,7 +205,21 @@ public final class Stdlib {
     }
 
     public static DecimalExpression sqrt(EvaluationContextInterface context, ListExpression list) {
-        DecimalExpression lhs = (DecimalExpression) list.getHead();
-        return lhs.sqrt();
+        return list.getHead().visit(new Visitor<DecimalExpression>() {
+            @Override
+            public DecimalExpression visitInteger(IntegerExpression integer) {
+                return visitDecimal(new DecimalExpression(integer.asDecimal()));
+            }
+
+            @Override
+            public DecimalExpression visitDecimal(DecimalExpression decimal) {
+                return decimal.sqrt();
+            }
+
+            @Override
+            public DecimalExpression otherwise(ExpressionInterface expression) {
+                throw new UnsupportedOperationException("cannot compute square root of " + Inspector.inspect(expression));
+            }
+        });
     }
 }
