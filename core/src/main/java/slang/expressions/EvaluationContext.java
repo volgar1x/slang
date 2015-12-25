@@ -4,7 +4,6 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 /**
  * @author Antoine Chauvin
@@ -34,7 +33,7 @@ public abstract class EvaluationContext implements EvaluationContextInterface {
         ExpressionInterface result = expressions.get(identifier);
         if (result == null) {
             if (parent == null) {
-                throw new NoSuchElementException(identifier);
+                throw new SlangException(String.format("undefined variable `%s'", identifier));
             }
             return parent.read(identifier);
         }

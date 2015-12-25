@@ -1,6 +1,5 @@
 package slang.expressions;
 
-import java.util.NoSuchElementException;
 import java.util.function.BiFunction;
 
 /**
@@ -15,7 +14,7 @@ public final class NilExpression extends ListExpression {
 
     @Override
     public ExpressionInterface getHead() {
-        throw new NoSuchElementException();
+        throw new SlangException("nil has no head :-(");
     }
 
     @Override

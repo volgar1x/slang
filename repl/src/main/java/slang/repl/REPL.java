@@ -3,6 +3,7 @@ package slang.repl;
 import slang.expressions.ExpressionInterface;
 import slang.expressions.FunctionInterface;
 import slang.expressions.NilExpression;
+import slang.expressions.SlangException;
 import slang.expressions.visitors.Inspector;
 import slang.interpreter.Interpreter;
 import slang.interpreter.MacroExpander;
@@ -38,8 +39,8 @@ public final class REPL {
             try {
                 result = interpreter.evaluate(macroExpander.evaluate(parser.next()));
                 interpreter.getStandardOutput().println(Inspector.inspect(result));
-            } catch (Exception e) {
-                e.printStackTrace(interpreter.getStandardError());
+            } catch (SlangException e) {
+                interpreter.getStandardError().println(e.getMessage());
             }
         }
         return result;
