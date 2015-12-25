@@ -31,8 +31,12 @@ public final class REPL {
         ExpressionInterface result = NilExpression.NIL;
         while (this.alive) {
             interpreter.getStandardOutput().print("> ");
-            result = interpreter.evaluate(parser.next());
-            interpreter.getStandardOutput().println(Inspector.inspect(result));
+            try {
+                result = interpreter.evaluate(parser.next());
+                interpreter.getStandardOutput().println(Inspector.inspect(result));
+            } catch (Exception e) {
+                e.printStackTrace(interpreter.getStandardError());
+            }
         }
         return result;
     }
