@@ -21,6 +21,8 @@ public final class Stdlib {
         interpreter.register("println", eval(Stdlib::println));
         interpreter.register("readln", eval(Stdlib::readln));
         interpreter.register("inspect", eval(Stdlib::inspect));
+        interpreter.register("car", eval(Stdlib::car));
+        interpreter.register("cdr", eval(Stdlib::cdr));
         interpreter.register("let", uneval(Stdlib::let));
         interpreter.register("case", uneval(Stdlib::case_));
         interpreter.register("def", uneval(Stdlib::def));
@@ -75,6 +77,14 @@ public final class Stdlib {
 
     public static ExpressionInterface inspect(EvaluationContextInterface context, ListExpression list) {
         return new StringExpression(Inspector.inspect(list.getHead()));
+    }
+
+    public static ExpressionInterface car(EvaluationContextInterface context, ListExpression list) {
+        return ((ListExpression) list.getHead()).getHead();
+    }
+
+    public static ExpressionInterface cdr(EvaluationContextInterface context, ListExpression list) {
+        return ((ListExpression) list.getHead()).getTail();
     }
 
     public static ExpressionInterface let(EvaluationContextInterface superContext, ListExpression list) {
