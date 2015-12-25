@@ -2,6 +2,7 @@ package slang.interpreter;
 
 import org.junit.Before;
 import org.junit.Test;
+import slang.SlangAssert;
 import slang.expressions.ExpressionInterface;
 import slang.expressions.EvaluationContext;
 import slang.parser.Parser;

@@ -1,4 +1,4 @@
-package slang.interpreter;
+package slang;
 
 import org.junit.AssertFormat;
 import slang.expressions.AtomExpression;
