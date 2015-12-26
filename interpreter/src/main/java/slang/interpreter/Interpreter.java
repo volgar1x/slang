@@ -1,5 +1,6 @@
 package slang.interpreter;
 
+import slang.Stdlib;
 import slang.expressions.*;
 
 import java.io.InputStream;

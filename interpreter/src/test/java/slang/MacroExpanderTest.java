@@ -1,10 +1,11 @@
-package slang.interpreter;
+package slang;
 
 import org.junit.Before;
 import org.junit.Test;
-import slang.SlangAssert;
 import slang.expressions.ExpressionInterface;
 import slang.expressions.EvaluationContext;
+import slang.interpreter.Interpreter;
+import slang.interpreter.MacroExpander;
 import slang.parser.Parser;
 import slang.tokenizer.Tokenizer;
 

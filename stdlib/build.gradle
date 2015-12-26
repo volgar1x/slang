@@ -1,10 +1,7 @@
 apply plugin: 'java'
-apply plugin: 'jacoco'
 
 dependencies {
     compile project(':core')
-    compile project(':stdlib')
     testCompile 'junit:junit:4.12'
-    testCompile project(':parser')
     testCompile project(':assert')
 }

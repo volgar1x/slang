@@ -1,4 +1,4 @@
-package slang.interpreter;
+package slang;
 
 import java.io.IOException;
 import java.io.InputStream;
