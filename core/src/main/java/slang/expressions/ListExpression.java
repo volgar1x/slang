@@ -48,6 +48,11 @@ public abstract class ListExpression implements ManyExpressionInterface {
         }
 
         @Override
+        public int length() {
+            return 1 + tail.length();
+        }
+
+        @Override
         public <T> T foldl(T seed, BiFunction<ExpressionInterface, T, T> function) {
             return tail.foldl(function.apply(head, seed), function);
         }

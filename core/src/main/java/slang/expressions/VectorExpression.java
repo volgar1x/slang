@@ -60,6 +60,11 @@ public final class VectorExpression implements ManyExpressionInterface {
     }
 
     @Override
+    public int length() {
+        return expressions.length;
+    }
+
+    @Override
     public <T> T foldl(T seed, BiFunction<ExpressionInterface, T, T> function) {
         T acc = seed;
         for (ExpressionInterface expression : expressions) {

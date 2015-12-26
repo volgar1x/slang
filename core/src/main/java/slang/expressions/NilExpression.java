@@ -28,6 +28,11 @@ public final class NilExpression extends ListExpression {
     }
 
     @Override
+    public int length() {
+        return 0;
+    }
+
+    @Override
     public <T> T foldl(T seed, BiFunction<ExpressionInterface, T, T> function) {
         return seed;
     }

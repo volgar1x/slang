@@ -15,6 +15,8 @@ public final class Stdlib {
         interpreter.register("inspect", eval(Core::inspect));
         interpreter.register("car", eval(Lists::car));
         interpreter.register("cdr", eval(Lists::cdr));
+        interpreter.register("cons", eval(Lists::cons));
+        interpreter.register("len", eval(Lists::len));
         interpreter.register("let", uneval(Core::let));
         interpreter.register("case", uneval(Core::case_));
         interpreter.register("def", uneval(Core::def));

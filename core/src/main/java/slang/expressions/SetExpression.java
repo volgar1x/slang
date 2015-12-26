@@ -46,6 +46,11 @@ public final class SetExpression implements ManyExpressionInterface {
     }
 
     @Override
+    public int length() {
+        return expressions.size();
+    }
+
+    @Override
     public <T> T foldl(T seed, BiFunction<ExpressionInterface, T, T> function) {
         T acc = seed;
         for (ExpressionInterface expression : expressions) {

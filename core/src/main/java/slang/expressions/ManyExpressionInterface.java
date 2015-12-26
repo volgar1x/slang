@@ -16,6 +16,7 @@ public interface ManyExpressionInterface extends ExpressionInterface {
     }
 
     boolean isEmpty();
+    int length();
 
     <T> T foldl(T seed, BiFunction<ExpressionInterface, T, T> function);
     ManyExpressionInterface map(Function<ExpressionInterface, ExpressionInterface> function);
