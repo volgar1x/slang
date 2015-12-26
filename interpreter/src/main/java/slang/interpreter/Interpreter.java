@@ -51,6 +51,10 @@ public final class Interpreter extends EvaluationContext implements Visitor<Expr
 
     @Override
     public ExpressionInterface visitList(ListExpression list) {
+        if (!(list.getHead() instanceof AtomExpression)) {
+            return visitMany(list);
+        }
+
         AtomExpression functionIdentifier = (AtomExpression) list.getHead();
         ListExpression functionArguments = list.getTail();
 
@@ -59,6 +63,11 @@ public final class Interpreter extends EvaluationContext implements Visitor<Expr
             return function.call(link(), functionArguments.map(this));
         }
         return function.call(this, functionArguments);
+    }
+
+    @Override
+    public ExpressionInterface visitMany(ManyExpressionInterface many) {
+        return many.map(this);
     }
 
     @Override

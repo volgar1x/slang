@@ -1,24 +1,11 @@
-package slang.interpreter;
+package slang.parser;
 
 import slang.expressions.*;
-
-import java.io.InputStream;
-import java.io.PrintStream;
 
 /**
  * @author Antoine Chauvin
  */
 public final class MacroExpander extends EvaluationContext implements Visitor<ExpressionInterface> {
-    public MacroExpander(InputStream stdin, PrintStream stdout, PrintStream stderr) {
-        super(stdin, stdout, stderr);
-
-        register("defmacro", new NativeFunction("defmacro", FunctionInterface.Definition.COMPILE_TIME, (context, arguments) -> {
-            SlangFunction function = SlangFunction.fromList(arguments, FunctionInterface.Definition.COMPILE_TIME);
-            register(function.getFunctionName(), function);
-            return NilExpression.NIL;
-        }));
-    }
-
     public MacroExpander(EvaluationContextInterface parent) {
         super(parent);
 
@@ -73,9 +60,9 @@ public final class MacroExpander extends EvaluationContext implements Visitor<Ex
         }
         FunctionInterface function = (FunctionInterface) maybe;
 
-        Interpreter interpreter = new Interpreter(this);
-        ExpressionInterface result = function.call(interpreter, list.getTail());
-        ExpressionInterface unquoted = unquote(interpreter, result);
+        EvaluationContextInterface interpretContext = getParent().link();
+        ExpressionInterface result = function.call(interpretContext, list.getTail());
+        ExpressionInterface unquoted = unquote(interpretContext, result);
         return evaluate(unquoted);
     }
 

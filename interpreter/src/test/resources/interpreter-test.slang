@@ -34,3 +34,10 @@
 (assert = 1 (plus-one (- 1 1)))
 
 (assert = 1.41421356237 (round (sqrt 2.0) 11))
+
+(def fibo-rec [n acc next]
+    (case ((= n 0) acc)
+        (:t (fibo-rec (- n 1) next (+ acc next)))))
+(def fibo [n] (fibo-rec n 0 1))
+
+;(assert = 55 (fibo 5))

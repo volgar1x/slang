@@ -28,6 +28,10 @@ public abstract class EvaluationContext implements EvaluationContextInterface {
         this.stderr = null;
     }
 
+    protected EvaluationContextInterface getParent() {
+        return parent;
+    }
+
     @Override
     public ExpressionInterface read(String identifier) {
         ExpressionInterface result = expressions.get(identifier);

@@ -6,7 +6,7 @@ import slang.expressions.visitors.Inspector;
 /**
  * @author Antoine Chauvin
  */
-public class Numbers {
+class Numbers {
     public static NumExpression plus(EvaluationContextInterface context, ListExpression list) {
         return list.<NumExpression>foldl(IntegerExpression.ZERO, (x, acc) -> ((NumExpression) x).plus(acc));
     }

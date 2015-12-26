@@ -7,7 +7,7 @@ import java.util.stream.IntStream;
 /**
  * @author Antoine Chauvin
  */
-final class MockInputStream extends InputStream {
+public final class MockInputStream extends InputStream {
     private final StringBuilder tail = new StringBuilder();
 
     @Override

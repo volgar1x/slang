@@ -1,12 +1,13 @@
-package slang;
+package slang.parser;
 
 import org.junit.Before;
 import org.junit.Test;
-import slang.expressions.ExpressionInterface;
+import slang.MockInputStream;
+import slang.MockOutputStream;
+import slang.SlangAssert;
 import slang.expressions.EvaluationContext;
+import slang.expressions.ExpressionInterface;
 import slang.interpreter.Interpreter;
-import slang.interpreter.MacroExpander;
-import slang.parser.Parser;
 import slang.tokenizer.Tokenizer;
 
 import java.io.PrintStream;
@@ -16,25 +17,24 @@ import java.io.PrintStream;
  */
 public class MacroExpanderTest {
 
-    private MockInputStream stdin;
-    private MockOutputStream stdout;
-    private MockOutputStream stderr;
     private EvaluationContext expander;
+    private Interpreter interpreter;
 
     @Before
     public void setUp() throws Exception {
-        stdin = new MockInputStream();
-        stdout = new MockOutputStream();
-        stderr = new MockOutputStream();
+        MockInputStream stdin = new MockInputStream();
+        MockOutputStream stdout = new MockOutputStream();
+        MockOutputStream stderr = new MockOutputStream();
 
-        expander = new MacroExpander(stdin, new PrintStream(stdout), new PrintStream(stderr));
+        interpreter = new Interpreter(stdin, new PrintStream(stdout), new PrintStream(stderr));
+        SlangAssert.load(interpreter);
+
+        expander = new MacroExpander(interpreter);
     }
 
     @Test
     public void test() throws Exception {
         Parser parser = new Parser(new Tokenizer(getClass().getClassLoader().getResourceAsStream("macro-test.slang")));
-        Interpreter interpreter = new Interpreter(stdin, new PrintStream(stdout), new PrintStream(stderr));
-        SlangAssert.load(interpreter);
 
         while (parser.hasNext()) {
             ExpressionInterface expanded = expander.evaluate(parser.next());

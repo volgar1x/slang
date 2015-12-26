@@ -6,7 +6,7 @@ import slang.expressions.NilExpression;
 import slang.expressions.SlangException;
 import slang.expressions.visitors.Inspector;
 import slang.interpreter.Interpreter;
-import slang.interpreter.MacroExpander;
+import slang.parser.MacroExpander;
 import slang.parser.Parser;
 import slang.tokenizer.Tokenizer;
 

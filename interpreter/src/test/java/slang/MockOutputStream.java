@@ -6,7 +6,7 @@ import java.io.OutputStream;
 /**
  * @author Antoine Chauvin
  */
-final class MockOutputStream extends OutputStream {
+public final class MockOutputStream extends OutputStream {
     private final StringBuilder queue = new StringBuilder();
 
     @Override
