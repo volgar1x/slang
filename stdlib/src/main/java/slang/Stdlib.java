@@ -21,6 +21,7 @@ public final class Stdlib {
         interpreter.register("let", uneval(Core::let));
         interpreter.register("case", uneval(Core::case_));
         interpreter.register("def", uneval(Core::def));
+        interpreter.register("raise", uneval(Core::raise));
         interpreter.register("not", eval(Booleans::not));
         interpreter.register("=", eval(Booleans::equals));
         interpreter.register("!=", eval(Booleans::nequals));

@@ -2,6 +2,7 @@ package slang;
 
 import slang.expressions.*;
 import slang.expressions.visitors.Inspector;
+import slang.expressions.visitors.Printer;
 import slang.expressions.visitors.Truthy;
 
 /**
@@ -45,5 +46,9 @@ class Core {
 
     public static ExpressionInterface inspect(EvaluationContextInterface context, ListExpression list) {
         return new StringExpression(Inspector.inspect(list.getHead()));
+    }
+
+    public static NilExpression raise(EvaluationContextInterface context, ListExpression arguments) {
+        throw new SlangException("error: " + Printer.print(arguments));
     }
 }

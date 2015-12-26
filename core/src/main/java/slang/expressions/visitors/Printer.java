@@ -39,7 +39,7 @@ public enum Printer implements Visitor<String> {
 
     @Override
     public String visitList(ListExpression list) {
-        return list.join(this, "(", " ", ")");
+        return list.join(this, "", " ", "");
     }
 
     @Override
