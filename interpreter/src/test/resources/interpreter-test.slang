@@ -40,4 +40,4 @@
         (:t (fibo-rec (- n 1) next (+ acc next)))))
 (def fibo [n] (fibo-rec n 0 1))
 
-;(assert = 55 (fibo 5))
+(assert = 55 (fibo 10))
