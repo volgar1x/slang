@@ -55,6 +55,9 @@ public final class Interpreter extends EvaluationContext implements Visitor<Expr
         ListExpression functionArguments = list.getTail();
 
         FunctionInterface function = (FunctionInterface) read(functionIdentifier.getAtom());
+        if (function instanceof SlangFunction) {
+            return function.call(link(), functionArguments.map(this));
+        }
         return function.call(this, functionArguments);
     }
 

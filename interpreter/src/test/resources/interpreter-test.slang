@@ -24,3 +24,5 @@
 ;(assert = 0 (tan 3.14159))
 
 (assert = 1 (plus-one 0))
+(assert = 0 (- (+ 0 1) 1))
+(assert = 1 (plus-one (- 1 1)))
