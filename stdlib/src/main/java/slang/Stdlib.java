@@ -9,6 +9,7 @@ public final class Stdlib {
     private Stdlib() {}
 
     public static void load(EvaluationContextInterface interpreter) {
+        interpreter.register("eval", eval(Code::eval));
         interpreter.register("print", eval(IO::print));
         interpreter.register("println", eval(IO::println));
         interpreter.register("readln", eval(IO::readln));
