@@ -25,6 +25,9 @@ public interface ManyExpressionInterface extends ExpressionInterface {
     }
 
     default String join(Function<ExpressionInterface, String> toString, String prefix, String between, String suffix) {
+        if (isEmpty()) {
+            return prefix + suffix;
+        }
         String res = foldl(prefix, (x, acc) -> acc + toString.apply(x) + between);
         return res.substring(0, res.length() - between.length()) + suffix;
     }
