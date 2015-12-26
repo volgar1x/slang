@@ -40,7 +40,7 @@ class Core {
 
     public static ExpressionInterface def(EvaluationContextInterface parentContext, ListExpression list) {
         SlangFunction function = SlangFunction.fromList(list);
-        parentContext.register(function.getFunctionName(), function);
+        parentContext.register(function.getFunctionName(), SlangFunction.tailCallOptimized(function));
         return function;
     }
 
