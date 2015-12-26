@@ -8,7 +8,7 @@ import slang.expressions.visitors.Truthy;
  */
 class Booleans {
     public static ExpressionInterface not(EvaluationContextInterface context, ListExpression list) {
-        return BooleanExpression.from(Truthy.truthy(list.getHead()));
+        return BooleanExpression.from(!Truthy.truthy(list.getHead()));
     }
 
     public static ExpressionInterface equals(EvaluationContextInterface context, ListExpression list) {
