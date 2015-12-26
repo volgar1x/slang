@@ -11,6 +11,12 @@
 (def plus-one [num]
   (+ num 1))
 
+(assert = "nil" (inspect ()))
+(assert = "nil" (inspect '()))
+(assert = "nil" (inspect :nil))
+(assert = "nil" (inspect :NIL))
+(assert = "nil" (inspect nil))
+
 (assert = ":atom" (inspect :atom))
 (assert = 2 (+ 1 1))
 (assert = 0 (- 1 1))

@@ -82,12 +82,24 @@ public final class Parser implements Iterator<ExpressionInterface> {
     private ExpressionInterface coerce(String value) {
         if (isInteger(value)) {
             return new IntegerExpression(new BigInteger(value, 10));
-        } else if (isDecimal(value)) {
-            return new DecimalExpression(new BigDecimal(value, MathContext.UNLIMITED));
-        } else if (value.startsWith(":")) {
-            return new AtomExpression(value.substring(1), true);
         }
-        return new AtomExpression(value);
+
+        if (isDecimal(value)) {
+            return new DecimalExpression(new BigDecimal(value, MathContext.UNLIMITED));
+        }
+
+        boolean isValue = false;
+
+        if (value.startsWith(":")) {
+            isValue = true;
+            value = value.substring(1);
+        }
+
+        if (value.equalsIgnoreCase("nil")) {
+            return NilExpression.NIL;
+        }
+
+        return new AtomExpression(value, isValue);
     }
 
     private boolean isInteger(String value) {
