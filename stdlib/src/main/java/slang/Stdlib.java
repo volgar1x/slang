@@ -27,6 +27,17 @@ public final class Stdlib {
         interpreter.register(">=", eval(Booleans::gte));
         interpreter.register("<", eval(Booleans::lt));
         interpreter.register("<=", eval(Booleans::lte));
+        interpreter.register("atom?", eval(Booleans::atom));
+        interpreter.register("dec?", eval(Booleans::decimal));
+        interpreter.register("fun?", eval(Booleans::function));
+        interpreter.register("int?", eval(Booleans::integer));
+        interpreter.register("list?", eval(Booleans::list));
+        interpreter.register("many?", eval(Booleans::many));
+        interpreter.register("nil?", eval(Booleans::nil));
+        interpreter.register("num?", eval(Booleans::num));
+        interpreter.register("set?", eval(Booleans::set));
+        interpreter.register("str?", eval(Booleans::string));
+        interpreter.register("vec?", eval(Booleans::vector));
         interpreter.register("+", eval(Numbers::plus));
         interpreter.register("-", eval(Numbers::minus));
         interpreter.register("*", eval(Numbers::times));
