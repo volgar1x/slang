@@ -82,6 +82,15 @@ public final class VectorExpression implements ManyExpressionInterface {
         return new VectorExpression(result);
     }
 
+    @FunctionalInterface
+    public interface Iterating<T> { void call(int i, T t); }
+
+    public void iterate(Iterating<ExpressionInterface> fun) {
+        for (int i = 0; i < expressions.length; i++) {
+            fun.call(i, expressions[i]);
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
