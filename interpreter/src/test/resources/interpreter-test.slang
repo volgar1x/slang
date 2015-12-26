@@ -41,3 +41,6 @@
 (def fibo [n] (fibo-rec n 0 1))
 
 (assert = 55 (fibo 10))
+
+(assert = 4 (.length "abcd"))                     ;instance method call
+(assert = "55" (java.lang.Integer/toString 55))   ;static method call
