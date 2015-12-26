@@ -61,4 +61,22 @@ public class Numbers {
             }
         });
     }
+
+    public static DecimalExpression round(EvaluationContextInterface context, ListExpression list) {
+        IntegerExpression ndigits = (IntegerExpression) list.getTail().getHead();
+        int n = ndigits.asInteger().intValueExact();
+
+        return list.getHead().visit(new Visitor<DecimalExpression>() {
+
+            @Override
+            public DecimalExpression visitDecimal(DecimalExpression decimal) {
+                return decimal.round(n);
+            }
+
+            @Override
+            public DecimalExpression otherwise(ExpressionInterface expression) {
+                throw new UnsupportedOperationException();
+            }
+        });
+    }
 }

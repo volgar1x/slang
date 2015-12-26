@@ -2,7 +2,6 @@ package slang.expressions;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.math.RoundingMode;
 
 /**
  * @author Antoine Chauvin
@@ -53,22 +52,28 @@ public final class DecimalExpression extends NumExpression {
         return new DecimalExpression(decimal.pow(num.asDecimal().intValueExact()));
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     public DecimalExpression sqrt() {
-        BigDecimal sqrt = new BigDecimal(1);
-//        sqrt.setScale(scale + 3, RoundingMode.FLOOR);
-        BigDecimal store = new BigDecimal(decimal.toString());
-        boolean first = true;
-        do{
-            if (!first){
-                store = new BigDecimal(sqrt.toString());
-            }
-            else first = false;
-//            store.setScale(scale + 3, RoundingMode.FLOOR);
-            sqrt = decimal.divide(store, RoundingMode.FLOOR).add(store).divide(
-                    TWO.decimal, RoundingMode.FLOOR);
-        }while (!store.equals(sqrt));
-        return new DecimalExpression(sqrt);
+        if (decimal.scale() <= 16) {
+            return new DecimalExpression(new BigDecimal(Math.sqrt(decimal.doubleValue())));
+        }
+
+        MathContext mc = MathContext.UNLIMITED;
+        BigDecimal g = decimal.divide(TWO.decimal, mc);
+        boolean done = false;
+        final int maxIterations = mc.getPrecision() + 1;
+        for (int i = 0; !done && i < maxIterations; i++) {
+            // r = (decimal/g + g) / 2
+            BigDecimal r = decimal.divide(g, mc);
+            r = r.add(g);
+            r = r.divide(TWO.decimal, mc);
+            done = r.equals(g);
+            g = r;
+        }
+        return new DecimalExpression(g);
+    }
+
+    public DecimalExpression round(int ndigits) {
+        return new DecimalExpression(decimal.setScale(ndigits, BigDecimal.ROUND_HALF_UP));
     }
 
     @Override
@@ -85,7 +90,7 @@ public final class DecimalExpression extends NumExpression {
 
         DecimalExpression that = (DecimalExpression) o;
 
-        return decimal.equals(that.decimal);
+        return decimal.compareTo(that.decimal) == 0;
 
     }
 

@@ -32,6 +32,7 @@ public final class Stdlib {
         interpreter.register("/", eval(Numbers::div));
         interpreter.register("%", eval(Numbers::rem));
         interpreter.register("sqrt", eval(Numbers::sqrt));
+        interpreter.register("round", eval(Numbers::round));
 //        interpreter.register("cos", eval(Stdlib::cos));
 //        interpreter.register("sin", eval(Stdlib::sin));
 //        interpreter.register("tan", eval(Stdlib::tan));

@@ -26,3 +26,5 @@
 (assert = 1 (plus-one 0))
 (assert = 0 (- (+ 0 1) 1))
 (assert = 1 (plus-one (- 1 1)))
+
+(assert = 1.41421356237 (round (sqrt 2.0) 11))
