@@ -51,13 +51,22 @@ public class SlangFunction implements FunctionInterface {
 
     @Override
     public ExpressionInterface call(EvaluationContextInterface context, ListExpression arguments) {
-        final ListExpression[] holder = new ListExpression[]{arguments};
-        argumentNames.forEach(argumentName -> {
-            context.register(argumentName, holder[0].getHead());
-            holder[0] = holder[0].getTail();
-        });
-
+        registerArguments(context, arguments);
         return operations.foldl(null, (operation, lastResult) -> context.evaluate(operation));
+    }
+
+    private void registerArguments(EvaluationContextInterface context, ListExpression arguments) {
+        ListExpression cur = arguments;
+        for (String argumentName : argumentNames) {
+            if (argumentName.equals("&")) {
+                String name = argumentNames.get(argumentNames.size() - 1);
+                context.register(name, cur);
+                break;
+            }
+
+            context.register(argumentName, cur.getHead());
+            cur = cur.getTail();
+        }
     }
 
     public static FunctionInterface tailCallOptimized(SlangFunction function) {
@@ -92,27 +101,16 @@ public class SlangFunction implements FunctionInterface {
             return function;
         }
 
-        List<String> argumentNames = function.argumentNames;
-
         return new NativeFunction(function.getFunctionName(), Definition.RUN_TIME,
                 (context, arguments) -> {
                     EvaluationContextInterface current = context.link();
-                    ListExpression args = arguments;
-                    for (String argumentName : argumentNames) {
-                        current.register(argumentName, context.evaluate(args.getHead()));
-                        args = args.getTail();
-                    }
+                    function.registerArguments(current, arguments.map(current));
 
                     while (!truthy(current.evaluate(cond))) {
                         current.evaluate(body);
 
                         EvaluationContextInterface newCurrent = context.link();
-                        ListExpression recurArgs = recur.getTail();
-                        for (String argumentName : argumentNames) {
-                            ExpressionInterface argument = recurArgs.getHead();
-                            newCurrent.register(argumentName, current.evaluate(argument));
-                            recurArgs = recurArgs.getTail();
-                        }
+                        function.registerArguments(newCurrent, recur.getTail().map(current));
                         current = newCurrent;
                     }
 

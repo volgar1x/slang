@@ -44,3 +44,6 @@
 
 (assert = 4 (.length "abcd"))                     ;instance method call
 (assert = "55" (java.lang.Integer/toString 55))   ;static method call
+
+(def with-varargs [hd & tl] (car (cdr tl)))
+(assert = 3 (with-varargs 1 2 3))
