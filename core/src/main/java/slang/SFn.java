@@ -1,5 +1,7 @@
 package slang;
 
+import java.util.function.Function;
+
 import static slang.visitors.Truth.truthy;
 
 /**
@@ -34,6 +36,10 @@ public final class SFn implements SFunction {
     public Object call(EvaluationContextInterface context, SList arguments) {
         registerArguments(context, arguments);
         return operations.foldl(null, (operation, lastResult) -> context.evaluate(operation));
+    }
+
+    public SFn map(Function<SList, SList> function) {
+        return new SFn(functionName, argumentNames, function.apply(operations));
     }
 
     private void registerArguments(EvaluationContextInterface context, SList arguments) {

@@ -12,8 +12,7 @@ public interface EvaluationContextInterface extends UnaryOperator<Object> {
     Object evaluate(Object expression);
 
     Object read(SAtom identifier);
-    /** @nullable */
-    Object readMaybe(SAtom identifier);
+    boolean present(SAtom identifier);
     void register(SAtom identifier, Object expression);
 
     InputStream getStandardInput();

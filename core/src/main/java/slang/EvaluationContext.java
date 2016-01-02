@@ -45,12 +45,9 @@ public abstract class EvaluationContext implements EvaluationContextInterface {
     }
 
     @Override
-    public Object readMaybe(SAtom identifier) {
-        Object result = expressions.get(identifier);
-        if (result == null && parent != null) {
-            return parent.readMaybe(identifier);
-        }
-        return result;
+    public boolean present(SAtom identifier) {
+        return expressions.containsKey(identifier) || parent != null && parent.present(identifier);
+
     }
 
     @Override
