@@ -2,7 +2,6 @@ package slang;
 
 import org.junit.Before;
 import org.junit.Test;
-import slang.expressions.NilExpression;
 import slang.interpreter.Interpreter;
 import slang.parser.Parser;
 import slang.tokenizer.Tokenizer;
@@ -36,14 +35,14 @@ public class InterpreterTest {
 
     @Test
     public void testEvaluate() throws Exception {
-        assertEquals(NilExpression.NIL, interpreter.evaluate(parser.next()));
+        assertEquals(SList.nil, interpreter.evaluate(parser.next()));
         assertEquals("Hello, World!\n", stdout.clear());
 
-        assertEquals(NilExpression.NIL, interpreter.evaluate(parser.next()));
+        assertEquals(SList.nil, interpreter.evaluate(parser.next()));
         assertEquals("Hello, Monde!\nHello, World!\n", stdout.clear());
 
         stdin.append("Joe\n");
-        assertEquals(NilExpression.NIL, interpreter.evaluate(parser.next()));
+        assertEquals(SList.nil, interpreter.evaluate(parser.next()));
         assertEquals("whats your name?Hi Joe !\n", stdout.clear());
 
         while (parser.hasNext()) {

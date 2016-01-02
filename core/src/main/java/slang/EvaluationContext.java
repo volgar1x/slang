@@ -1,4 +1,4 @@
-package slang.expressions;
+package slang;
 
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -9,7 +9,7 @@ import java.util.Map;
  * @author Antoine Chauvin
  */
 public abstract class EvaluationContext implements EvaluationContextInterface {
-    private final Map<String, ExpressionInterface> expressions = new HashMap<>();
+    private final Map<SAtom, Object> expressions = new HashMap<>();
     private final EvaluationContextInterface parent;
     private final InputStream stdin;
     private final PrintStream stdout, stderr;
@@ -33,11 +33,11 @@ public abstract class EvaluationContext implements EvaluationContextInterface {
     }
 
     @Override
-    public ExpressionInterface read(String identifier) {
-        ExpressionInterface result = expressions.get(identifier);
+    public Object read(SAtom identifier) {
+        Object result = expressions.get(identifier);
         if (result == null) {
             if (parent == null) {
-                throw new SlangException(String.format("undefined variable `%s'", identifier));
+                throw new SExpression(String.format("undefined variable `%s'", identifier));
             }
             return parent.read(identifier);
         }
@@ -45,8 +45,8 @@ public abstract class EvaluationContext implements EvaluationContextInterface {
     }
 
     @Override
-    public ExpressionInterface readMaybe(String identifier) {
-        ExpressionInterface result = expressions.get(identifier);
+    public Object readMaybe(SAtom identifier) {
+        Object result = expressions.get(identifier);
         if (result == null && parent != null) {
             return parent.readMaybe(identifier);
         }
@@ -54,7 +54,7 @@ public abstract class EvaluationContext implements EvaluationContextInterface {
     }
 
     @Override
-    public void register(String identifier, ExpressionInterface expression) {
+    public void register(SAtom identifier, Object expression) {
         expressions.put(identifier, expression);
     }
 

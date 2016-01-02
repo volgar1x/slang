@@ -1,19 +1,17 @@
 package slang.parser;
 
-import slang.expressions.*;
+import slang.*;
 import slang.tokenizer.ConstToken;
 import slang.tokenizer.Token;
 import slang.tokenizer.TokenInterface;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.math.MathContext;
 import java.util.Iterator;
+
 
 /**
  * @author Antoine Chauvin
  */
-public final class Parser implements Iterator<ExpressionInterface> {
+public final class Parser implements Iterator<Object> {
     private final Iterator<TokenInterface> tokenizer;
 
     public Parser(Iterator<TokenInterface> tokenizer) {
@@ -26,33 +24,33 @@ public final class Parser implements Iterator<ExpressionInterface> {
     }
 
     @Override
-    public ExpressionInterface next() {
+    public Object next() {
         return next(tokenizer.next());
     }
 
-    private ExpressionInterface next(TokenInterface token) {
+    private Object next(TokenInterface token) {
         if (token instanceof ConstToken) {
             switch ((ConstToken) token) {
                 case START_LIST:
-                    return nextMany(new ListExpression.Builder(), ConstToken.END_LIST);
+                    return nextMany(SList.builder(), ConstToken.END_LIST);
                 case START_SET:
-                    return nextMany(new SetExpression.Builder(), ConstToken.END_SET);
+                    return nextMany(SSet.builder(), ConstToken.END_SET);
                 case START_VECTOR:
-                    return nextMany(new VectorExpression.Builder(), ConstToken.END_VECTOR);
+                    return nextMany(SVector.builder(), ConstToken.END_VECTOR);
 
                 case DOUBLE_QUOTE:
                     String string = nextTokenValue();
                     tokenizer.next().expect(ConstToken.DOUBLE_QUOTE);
-                    return new StringExpression(string);
+                    return string;
 
                 case QUOTE:
-                    return new QuoteExpression(next());
+                    return new SQuote(next());
 
                 case UNQUOTE:
-                    return new UnquoteExpression(nextTokenValue());
+                    return new SUnquote(nextTokenValue());
 
                 case EOF:
-                    return NilExpression.NIL;
+                    return null;
             }
         }
 
@@ -67,39 +65,36 @@ public final class Parser implements Iterator<ExpressionInterface> {
         throw new RuntimeException("unexpected token `" + token + "'");
     }
 
-    private ManyExpressionInterface nextMany(ManyExpressionInterface.Builder builder, ConstToken delim) {
+    private SMany nextMany(SMany.Builder builder, ConstToken delim) {
         while (true) {
             TokenInterface token = tokenizer.next();
             if (token.equals(delim)) {
                 break;
             }
-            ExpressionInterface expression = next(token);
+            Object expression = next(token);
             builder.add(expression);
         }
         return builder.build();
     }
 
-    private ExpressionInterface coerce(String value) {
+    private Object coerce(String value) {
         if (isInteger(value)) {
-            return new IntegerExpression(new BigInteger(value, 10));
+            return Long.parseLong(value);
         }
 
         if (isDecimal(value)) {
-            return new DecimalExpression(new BigDecimal(value, MathContext.UNLIMITED));
-        }
-
-        boolean isValue = false;
-
-        if (value.startsWith(":")) {
-            isValue = true;
-            value = value.substring(1);
+            return Double.parseDouble(value);
         }
 
         if (value.equalsIgnoreCase("nil")) {
-            return NilExpression.NIL;
+            return null;
         }
 
-        return new AtomExpression(value, isValue);
+        if (value.charAt(0) == ':') {
+            return SAtom.of(value.substring(1));
+        }
+
+        return SAtom.of(value);
     }
 
     private boolean isInteger(String value) {

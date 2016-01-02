@@ -1,14 +1,14 @@
 package slang.repl;
 
-import slang.expressions.ExpressionInterface;
-import slang.expressions.FunctionInterface;
-import slang.expressions.NilExpression;
-import slang.expressions.SlangException;
-import slang.expressions.visitors.Inspector;
+import slang.SAtom;
+import slang.SExpression;
+import slang.SFunction;
+import slang.SList;
 import slang.interpreter.Interpreter;
 import slang.parser.MacroExpander;
 import slang.parser.Parser;
 import slang.tokenizer.Tokenizer;
+import slang.visitors.Inspector;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -30,9 +30,9 @@ public final class REPL {
         this.parser = parser;
         this.verbose = verbose;
 
-        this.interpreter.register("kill", (FunctionInterface) (context, arguments) -> {
+        this.interpreter.register(SAtom.of("kill"), (SFunction) (context, arguments) -> {
             this.alive = false;
-            return NilExpression.NIL;
+            return SList.nil;
         });
     }
 
@@ -57,9 +57,9 @@ public final class REPL {
         return interpreter;
     }
 
-    public ExpressionInterface run() {
+    public Object run() {
         this.alive = true;
-        ExpressionInterface result = NilExpression.NIL;
+        Object result = SList.nil;
         while (this.alive && parser.hasNext()) {
             try {
                 result = interpreter.evaluate(macroExpander.evaluate(parser.next()));
@@ -67,7 +67,7 @@ public final class REPL {
                 if (verbose) {
                     interpreter.getStandardOutput().println(Inspector.inspect(result));
                 }
-            } catch (SlangException e) {
+            } catch (SExpression e) {
                 interpreter.getStandardError().println(e.getMessage());
             }
         }

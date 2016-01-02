@@ -2,11 +2,10 @@ package slang.parser;
 
 import org.junit.Before;
 import org.junit.Test;
+import slang.EvaluationContext;
 import slang.MockInputStream;
 import slang.MockOutputStream;
 import slang.SlangAssert;
-import slang.expressions.EvaluationContext;
-import slang.expressions.ExpressionInterface;
 import slang.interpreter.Interpreter;
 import slang.tokenizer.Tokenizer;
 
@@ -37,7 +36,7 @@ public class MacroExpanderTest {
         Parser parser = new Parser(new Tokenizer(getClass().getClassLoader().getResourceAsStream("macro-test.slang")));
 
         while (parser.hasNext()) {
-            ExpressionInterface expanded = expander.evaluate(parser.next());
+            Object expanded = expander.evaluate(parser.next());
             interpreter.evaluate(expanded);
         }
     }

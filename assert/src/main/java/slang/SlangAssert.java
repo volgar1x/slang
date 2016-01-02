@@ -1,12 +1,8 @@
 package slang;
 
 import org.junit.AssertFormat;
-import slang.expressions.AtomExpression;
-import slang.expressions.EvaluationContextInterface;
-import slang.expressions.ExpressionInterface;
-import slang.expressions.FunctionInterface;
-import slang.expressions.visitors.Inspector;
-import slang.expressions.visitors.Truthy;
+import slang.visitors.Inspector;
+import slang.visitors.Truth;
 
 /**
  * @author Antoine Chauvin
@@ -15,18 +11,18 @@ public final class SlangAssert {
     private SlangAssert() {}
 
     public static void load(EvaluationContextInterface loadContext) {
-        loadContext.register("assert", (FunctionInterface) (context, arguments) -> {
-            ExpressionInterface result = context.evaluate(arguments);
+        loadContext.register(SAtom.of("assert"), (SFunction) (context, arguments) -> {
+            Object result = context.evaluate(arguments);
 
-            if (!Truthy.truthy(result)) {
+            if (!Truth.truthy(result)) {
                 String message = Inspector.inspect(arguments);
-                String expected = Inspector.inspect(arguments.getTail().getHead());
-                String actual = Inspector.inspect(context.evaluate(arguments.getTail().getTail().getHead()));
+                String expected = Inspector.inspect(arguments.tail().head());
+                String actual = Inspector.inspect(context.evaluate(arguments.tail().tail().head()));
 
                 throw new AssertionError(AssertFormat.format(message, expected, actual));
             }
 
-            return AtomExpression.T;
+            return SAtom.of("true");
         });
     }
 }
