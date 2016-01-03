@@ -45,3 +45,7 @@
 
 (def with-varargs [hd & tl] (car (cdr tl)))
 (assert = 3 (with-varargs 1 2 3))
+
+(def call-lambda-function [fun] (* 2 (fun)))
+
+(assert = 42 (call-lambda-function (fn [] (+ 12 9))))

@@ -19,12 +19,16 @@ public final class SFn implements SFunction {
         this.operations = operations;
     }
 
-    public static SFn fromList(SList list) {
-        SAtom functionName = (SAtom) list.head();
-        SVector argumentVector = (SVector) list.tail().head();
-        SList operations = list.tail().tail();
+    public static SFn fromList(SAtom functionName, SList list) {
+        SVector argumentVector = (SVector) list.head();
+        SList operations = list.tail();
 
         return new SFn(functionName, argumentVector, operations);
+    }
+
+    public static SFn fromList(SList list) {
+        SAtom functionName = (SAtom) list.head();
+        return fromList(functionName, list.tail());
     }
 
     @Override

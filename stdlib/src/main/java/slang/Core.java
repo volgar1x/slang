@@ -14,6 +14,7 @@ public final class Core {
         Stdlib.loadFn(context, SAtom.of("def"), Core::def, false);
         Stdlib.loadFn(context, SAtom.of("cond"), Core::cond, false);
         Stdlib.loadFn(context, SAtom.of("inspect"), Core::inspect, true);
+        Stdlib.loadFn(context, SAtom.of("fn"), Core::fn, false);
     }
 
     public static Object let(EvaluationContextInterface context, SList arguments) {
@@ -51,5 +52,9 @@ public final class Core {
         }
 
         return SList.nil;
+    }
+
+    public static Object fn(EvaluationContextInterface context, SList arguments) {
+        return SFn.fromList(SAtom.of("%"), arguments);
     }
 }
