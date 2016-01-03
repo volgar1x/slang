@@ -67,6 +67,8 @@ public final class Interpreter extends EvaluationContext implements Visitor<Obje
             return doJavaInstanceMethodCall(functionName, list.tail().map(this));
         } else if (isJavaStaticFunctionCall(functionName)) {
             return doJavaStaticMethodCall(functionName, list.tail().map(this));
+        } else if (isJavaStaticFieldCall(functionName)) {
+            return doJavaStaticFieldCall(functionName);
         }
 
         if (!present(functionName)) {
@@ -147,6 +149,26 @@ public final class Interpreter extends EvaluationContext implements Visitor<Obje
         }
     }
 
+    private boolean isJavaStaticFieldCall(SAtom functionName) {
+        String string = functionName.toString();
+
+        int sep = string.indexOf('#');
+        if (sep < 0) {
+            return false;
+        }
+
+        String className = string.substring(0, sep);
+        String fieldName = string.substring(sep + 1);
+
+        try {
+            Class<?> klass = getClassLoader().loadClass(className);
+            Field field = klass.getField(fieldName);
+            return (field.getModifiers() & Modifier.STATIC) != 0;
+        } catch (ClassNotFoundException | NoSuchFieldException e) {
+            return false;
+        }
+    }
+
     private Object doJavaConstructor(SAtom functionName, SList arguments) {
         String className = functionName.toString();
         className = className.substring(0, className.length() - 1);
@@ -209,6 +231,22 @@ public final class Interpreter extends EvaluationContext implements Visitor<Obje
 
             return method.invoke(null, parameters);
         } catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException e) {
+            throw new SException(e);
+        }
+    }
+
+    private Object doJavaStaticFieldCall(SAtom functionName) {
+        String string = functionName.toString();
+        int sep = string.indexOf('#');
+        String className = string.substring(0, sep);
+        String fieldName = string.substring(sep + 1);
+
+        try {
+            Class<?> klass = getClassLoader().loadClass(className);
+
+            Field field = klass.getField(fieldName);
+            return field.get(null);
+        } catch (ClassNotFoundException | IllegalAccessException | NoSuchFieldException e) {
             throw new SException(e);
         }
     }
