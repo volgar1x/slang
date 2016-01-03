@@ -39,6 +39,9 @@
 
 (assert = 4 (.length "abcd"))                     ;instance method call
 (assert = "55" (java.lang.Integer/toString 55))   ;static method call
+(assert = -1.0 (java.lang.Math/cos 3.14159265358979323846))
+(assert = 444 (.add (java.math.BigInteger. "123") (java.math.BigInteger. "321")))
+(assert = "java.lang.String" (.getName (.getClass "string")))
 
 (def with-varargs [hd & tl] (car (cdr tl)))
 (assert = 3 (with-varargs 1 2 3))

@@ -89,6 +89,6 @@ public interface Visitor<R> extends Function<Object, R> {
         if (expression instanceof SVector) {
             return visitVector((SVector) expression);
         }
-        throw new IllegalArgumentException();
+        return otherwise(expression);
     }
 }

@@ -98,6 +98,12 @@ public final class Parser implements Iterator<Object> {
     }
 
     private boolean isInteger(String value) {
+        if (value.charAt(0) == '-') {
+            value = value.substring(1);
+        }
+        if (value.isEmpty()) {
+            return false;
+        }
         for (int i = 0; i < value.length(); i++) {
             char chr = value.charAt(i);
             if (chr < '0' || chr > '9') {
@@ -108,6 +114,12 @@ public final class Parser implements Iterator<Object> {
     }
 
     private boolean isDecimal(String value) {
+        if (value.charAt(0) == '-') {
+            value = value.substring(1);
+        }
+        if (value.isEmpty()) {
+            return false;
+        }
         int sep = value.indexOf('.');
         // must begin and end by a digit
         if (sep <= 0 || sep >= value.length()) {

@@ -7,6 +7,7 @@ import java.io.PrintStream;
 import java.lang.reflect.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.stream.Collectors;
 
 /**
  * @author Antoine Chauvin
@@ -61,11 +62,11 @@ public final class Interpreter extends EvaluationContext implements Visitor<Obje
         SAtom functionName = (SAtom) list.head();
 
         if (isJavaConstructor(functionName)) {
-            return doJavaConstructor(functionName, list.tail());
+            return doJavaConstructor(functionName, list.tail().map(this));
         } else if (isJavaInstanceMethodCall(functionName)) {
-            return doJavaInstanceMethodCall(functionName, list.tail());
+            return doJavaInstanceMethodCall(functionName, list.tail().map(this));
         } else if (isJavaStaticFunctionCall(functionName)) {
-            return doJavaStaticMethodCall(functionName, list.tail());
+            return doJavaStaticMethodCall(functionName, list.tail().map(this));
         }
 
         if (!present(functionName)) {
@@ -173,7 +174,12 @@ public final class Interpreter extends EvaluationContext implements Visitor<Obje
 
         Method method = findByArguments(klass.getDeclaredMethods(), arguments.tail(), methodName, false);
         if (method == null) {
-            throw new SException(String.format("`%s' instance method not found on `%s'", methodName, klass.getName()));
+            method = findByArguments(klass.getMethods(), arguments.tail(), methodName, false);
+        }
+        if (method == null) {
+            throw new SException(String.format("`%s' instance method not found on `%s'",
+                    methodName + arguments.tail().stream().map(x -> x.getClass().getName()).collect(Collectors.joining(", ", "(", ")")),
+                    klass.getName()));
         }
 
         Object[] parameters = asParameterArray(method, arguments.tail());
@@ -263,7 +269,10 @@ public final class Interpreter extends EvaluationContext implements Visitor<Obje
 
             @Override
             public Boolean visitDecimal(double decimal) {
-                if (Float.class.isAssignableFrom(to)) {
+                if (Float.class.isAssignableFrom(to) || float.class.isAssignableFrom(to)) {
+                    return true;
+                }
+                if (double.class.isAssignableFrom(to)) {
                     return true;
                 }
                 if (BigDecimal.class.isAssignableFrom(to)) {
@@ -281,6 +290,9 @@ public final class Interpreter extends EvaluationContext implements Visitor<Obje
                     return true;
                 }
                 if (Integer.class.isAssignableFrom(to) || int.class.isAssignableFrom(to)) {
+                    return true;
+                }
+                if (long.class.isAssignableFrom(to)) {
                     return true;
                 }
                 if (BigInteger.class.isAssignableFrom(to)) {
