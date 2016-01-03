@@ -15,7 +15,7 @@ public final class MockOutputStream extends OutputStream {
     }
 
     public String clear() {
-        String result = queue.toString();
+        String result = queue.toString().replace("\r\n", "\n");
         queue.setLength(0);
         return result;
     }
