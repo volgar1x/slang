@@ -15,6 +15,7 @@ public interface EvaluationContextInterface extends UnaryOperator<Object> {
     boolean present(SAtom identifier);
     void register(SAtom identifier, Object expression);
 
+    ClassLoader getClassLoader();
     InputStream getStandardInput();
     PrintStream getStandardOutput();
     PrintStream getStandardError();

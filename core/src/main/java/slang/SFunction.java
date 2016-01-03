@@ -11,4 +11,8 @@ public interface SFunction {
     default SAtom getFunctionName() {
         return SAtom.of("undefined");
     }
+
+    default boolean evaluateArguments() {
+        return false;
+    }
 }

@@ -33,6 +33,11 @@ public final class SFn implements SFunction {
     }
 
     @Override
+    public boolean evaluateArguments() {
+        return true;
+    }
+
+    @Override
     public Object call(EvaluationContextInterface context, SList arguments) {
         registerArguments(context, arguments);
         return operations.foldl(null, (operation, lastResult) -> context.evaluate(operation));

@@ -1,7 +1,7 @@
 package slang.repl;
 
 import slang.SAtom;
-import slang.SExpression;
+import slang.SException;
 import slang.SFunction;
 import slang.SList;
 import slang.interpreter.Interpreter;
@@ -45,7 +45,7 @@ public final class REPL {
     }
 
     public static REPL fromFile(Path path, boolean verbose) throws IOException {
-        Interpreter interpreter = new Interpreter(System.in, System.out, System.err);
+        Interpreter interpreter = new Interpreter(REPL.class.getClassLoader(), System.in, System.out, System.err);
 
         return new REPL(interpreter,
                 new MacroExpander(interpreter),
@@ -67,7 +67,7 @@ public final class REPL {
                 if (verbose) {
                     interpreter.getStandardOutput().println(Inspector.inspect(result));
                 }
-            } catch (SExpression e) {
+            } catch (SException e) {
                 interpreter.getStandardError().println(e.getMessage());
             }
         }

@@ -42,4 +42,19 @@ public final class Nil extends AbstractList<Object> implements SList {
     public SList map(Function<Object, Object> function) {
         return this;
     }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o == this;
+    }
+
+    @Override
+    public String toString() {
+        return "nil";
+    }
 }

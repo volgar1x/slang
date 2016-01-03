@@ -29,7 +29,7 @@ public class InterpreterTest {
 
         parser = new Parser(new Tokenizer(getClass().getClassLoader().getResourceAsStream("interpreter-test.slang")));
 
-        interpreter = new Interpreter(stdin, new PrintStream(stdout), new PrintStream(stderr));
+        interpreter = new Interpreter(getClass().getClassLoader(), stdin, new PrintStream(stdout), new PrintStream(stderr));
         SlangAssert.load(interpreter);
     }
 

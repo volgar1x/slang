@@ -25,7 +25,7 @@ public class MacroExpanderTest {
         MockOutputStream stdout = new MockOutputStream();
         MockOutputStream stderr = new MockOutputStream();
 
-        interpreter = new Interpreter(stdin, new PrintStream(stdout), new PrintStream(stderr));
+        interpreter = new Interpreter(getClass().getClassLoader(), stdin, new PrintStream(stdout), new PrintStream(stderr));
         SlangAssert.load(interpreter);
 
         expander = new MacroExpander(interpreter);

@@ -48,4 +48,35 @@ public final class Cons extends AbstractList<Object> implements SList {
     public SList map(Function<Object, Object> function) {
         return new Cons(function.apply(head), tail.map(function));
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        Cons objects = (Cons) o;
+        return head.equals(objects.head) && tail.equals(objects.tail);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + head.hashCode();
+        result = 31 * result + tail.hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder("(");
+
+        for (SList cur = this; cur != SList.nil; cur = cur.tail()) {
+            builder.append(cur.head());
+        }
+
+        builder.append(')');
+
+        return builder.toString();
+    }
 }

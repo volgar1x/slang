@@ -11,10 +11,12 @@ import java.util.Map;
 public abstract class EvaluationContext implements EvaluationContextInterface {
     private final Map<SAtom, Object> expressions = new HashMap<>();
     private final EvaluationContextInterface parent;
+    private final ClassLoader classLoader;
     private final InputStream stdin;
     private final PrintStream stdout, stderr;
 
-    public EvaluationContext(InputStream stdin, PrintStream stdout, PrintStream stderr) {
+    public EvaluationContext(ClassLoader classLoader, InputStream stdin, PrintStream stdout, PrintStream stderr) {
+        this.classLoader = classLoader;
         this.parent = null;
         this.stdin = stdin;
         this.stdout = stdout;
@@ -23,6 +25,7 @@ public abstract class EvaluationContext implements EvaluationContextInterface {
 
     public EvaluationContext(EvaluationContextInterface parent) {
         this.parent = parent;
+        this.classLoader = null;
         this.stdin = null;
         this.stdout = null;
         this.stderr = null;
@@ -37,7 +40,7 @@ public abstract class EvaluationContext implements EvaluationContextInterface {
         Object result = expressions.get(identifier);
         if (result == null) {
             if (parent == null) {
-                throw new SExpression(String.format("undefined variable `%s'", identifier));
+                throw new SException(String.format("undefined variable `%s'", identifier));
             }
             return parent.read(identifier);
         }
@@ -53,6 +56,11 @@ public abstract class EvaluationContext implements EvaluationContextInterface {
     @Override
     public void register(SAtom identifier, Object expression) {
         expressions.put(identifier, expression);
+    }
+
+    @Override
+    public ClassLoader getClassLoader() {
+        return parent != null ? parent.getClassLoader() : classLoader;
     }
 
     @Override
