@@ -2,6 +2,7 @@ package slang;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -13,6 +14,8 @@ public interface SList extends List<Object>, SMany {
 
     Object head();
     SList tail();
+
+    Object fold(BiFunction<Object, Object, Object> function);
 
     @Override
     SList map(Function<Object, Object> function);

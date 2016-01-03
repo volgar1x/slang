@@ -1,8 +1,6 @@
 package slang.visitors;
 
-import slang.SSet;
-import slang.SVector;
-import slang.Visitor;
+import slang.*;
 
 import java.util.stream.Collectors;
 
@@ -22,6 +20,21 @@ public enum Inspector implements Visitor<String> {
     }
 
     @Override
+    public String visitQuote(SQuote quote) {
+        return "'" + apply(quote.quoted);
+    }
+
+    @Override
+    public String visitUnquote(SUnquote unquote) {
+        return "#" + unquote.name;
+    }
+
+    @Override
+    public String visitList(SList list) {
+        return list.stream().map(this).collect(Collectors.joining(" ", "(", ")"));
+    }
+
+    @Override
     public String visitSet(SSet set) {
         return set.stream().map(this).collect(Collectors.joining(" ", "#{", "}"));
     }
@@ -30,6 +43,5 @@ public enum Inspector implements Visitor<String> {
     public String visitVector(SVector vector) {
         return vector.stream().map(this).collect(Collectors.joining(" ", "[", "]"));
     }
-
 
 }

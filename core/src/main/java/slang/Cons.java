@@ -30,6 +30,11 @@ public final class Cons extends AbstractList<Object> implements SList {
     }
 
     @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
     public Object head() {
         return head;
     }
@@ -42,6 +47,14 @@ public final class Cons extends AbstractList<Object> implements SList {
     @Override
     public <T> T foldl(T initial, BiFunction<T, Object, T> function) {
         return tail.foldl(function.apply(initial, head), function);
+    }
+
+    @Override
+    public Object fold(BiFunction<Object, Object, Object> function) {
+        if (tail == SList.nil) {
+            return head;
+        }
+        return function.apply(tail.fold(function), head);
     }
 
     @Override

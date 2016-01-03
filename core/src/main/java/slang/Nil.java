@@ -24,6 +24,11 @@ public final class Nil extends AbstractList<Object> implements SList {
     }
 
     @Override
+    public boolean isEmpty() {
+        return true;
+    }
+
+    @Override
     public Object head() {
         throw new UnsupportedOperationException();
     }
@@ -36,6 +41,11 @@ public final class Nil extends AbstractList<Object> implements SList {
     @Override
     public <T> T foldl(T initial, BiFunction<T, Object, T> function) {
         return initial;
+    }
+
+    @Override
+    public Object fold(BiFunction<Object, Object, Object> function) {
+        return this;
     }
 
     @Override

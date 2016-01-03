@@ -86,12 +86,12 @@ public final class Parser implements Iterator<Object> {
             return Double.parseDouble(value);
         }
 
-        if (value.equalsIgnoreCase("nil")) {
-            return null;
+        if (value.charAt(0) == ':') {
+            value = value.substring(1);
         }
 
-        if (value.charAt(0) == ':') {
-            return SAtom.of(value.substring(1));
+        if (value.equalsIgnoreCase("nil")) {
+            return SList.nil;
         }
 
         return SAtom.of(value);

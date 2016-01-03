@@ -4,10 +4,7 @@ import slang.*;
 
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Executable;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
@@ -17,6 +14,7 @@ import java.math.BigInteger;
 public final class Interpreter extends EvaluationContext implements Visitor<Object> {
     public Interpreter(ClassLoader classLoader, InputStream stdin, PrintStream stdout, PrintStream stderr) {
         super(classLoader, stdin, stdout, stderr);
+        Stdlib.load(this);
     }
 
     private Interpreter(EvaluationContextInterface parent) {
@@ -41,6 +39,11 @@ public final class Interpreter extends EvaluationContext implements Visitor<Obje
     @Override
     public Object otherwise(Object expression) {
         return expression;
+    }
+
+    @Override
+    public Object visitAtom(SAtom atom) {
+        return read(atom);
     }
 
     @Override
@@ -149,7 +152,7 @@ public final class Interpreter extends EvaluationContext implements Visitor<Obje
 
         try {
             Class<?> klass = getClassLoader().loadClass(className);
-            Constructor<?> constructor = findByArguments(klass.getConstructors(), arguments, className);
+            Constructor<?> constructor = findByArguments(klass.getConstructors(), arguments, className, false);
             if (constructor == null) {
                 throw new SException(String.format("`%s' constructor not found", functionName));
             }
@@ -168,12 +171,12 @@ public final class Interpreter extends EvaluationContext implements Visitor<Obje
         Object receiver = arguments.head();
         Class<?> klass = receiver.getClass();
 
-        Method method = findByArguments(klass.getMethods(), arguments, methodName);
+        Method method = findByArguments(klass.getDeclaredMethods(), arguments.tail(), methodName, false);
         if (method == null) {
             throw new SException(String.format("`%s' instance method not found on `%s'", methodName, klass.getName()));
         }
 
-        Object[] parameters = asParameterArray(method, arguments);
+        Object[] parameters = asParameterArray(method, arguments.tail());
 
         try {
             return method.invoke(receiver, parameters);
@@ -191,9 +194,9 @@ public final class Interpreter extends EvaluationContext implements Visitor<Obje
         try {
             Class<?> klass = getClassLoader().loadClass(className);
 
-            Method method = findByArguments(klass.getMethods(), arguments, methodName);
+            Method method = findByArguments(klass.getDeclaredMethods(), arguments, methodName, true);
             if (method == null) {
-                throw new SException(String.format("`%s' instance method not found on `%s'", methodName, className));
+                throw new SException(String.format("`%s' static method not found on `%s'", methodName, className));
             }
 
             Object[] parameters = asParameterArray(method, arguments);
@@ -204,13 +207,19 @@ public final class Interpreter extends EvaluationContext implements Visitor<Obje
         }
     }
 
-    private <T extends Executable> T findByArguments(T[] executables, SList arguments, String name) {
+    private <T extends Executable> T findByArguments(T[] executables, SList arguments, String name, boolean statik) {
+        int arity = arguments.size();
+
         for (T executable : executables) {
+            if ((executable.getModifiers() & Modifier.STATIC) == 0 && statik) {
+                continue;
+            }
+
             if (!executable.getName().equals(name)) {
                 continue;
             }
 
-            if (executable.getParameterCount() != arguments.size()) {
+            if (executable.getParameterCount() != arity) {
                 continue;
             }
 
@@ -265,22 +274,19 @@ public final class Interpreter extends EvaluationContext implements Visitor<Obje
 
             @Override
             public Boolean visitInteger(long integer) {
-                if (Character.class.isAssignableFrom(to)) {
+                if (Byte.class.isAssignableFrom(to) || byte.class.isAssignableFrom(to)) {
                     return true;
                 }
-                if (Byte.class.isAssignableFrom(to)) {
+                if (Short.class.isAssignableFrom(to) || short.class.isAssignableFrom(to)) {
                     return true;
                 }
-                if (Short.class.isAssignableFrom(to)) {
-                    return true;
-                }
-                if (Integer.class.isAssignableFrom(to)) {
+                if (Integer.class.isAssignableFrom(to) || int.class.isAssignableFrom(to)) {
                     return true;
                 }
                 if (BigInteger.class.isAssignableFrom(to)) {
                     return true;
                 }
-                return null;
+                return otherwise(integer);
             }
 
             @Override
@@ -319,16 +325,13 @@ public final class Interpreter extends EvaluationContext implements Visitor<Obje
 
             @Override
             public Object visitInteger(long integer) {
-                if (Character.class.isAssignableFrom(to)) {
-                    return (char) integer;
-                }
-                if (Byte.class.isAssignableFrom(to)) {
+                if (Byte.class.isAssignableFrom(to) || byte.class.isAssignableFrom(to)) {
                     return (byte) integer;
                 }
-                if (Short.class.isAssignableFrom(to)) {
+                if (Short.class.isAssignableFrom(to) || short.class.isAssignableFrom(to)) {
                     return (short) integer;
                 }
-                if (Integer.class.isAssignableFrom(to)) {
+                if (Integer.class.isAssignableFrom(to) || int.class.isAssignableFrom(to)) {
                     return (int) integer;
                 }
                 if (BigInteger.class.isAssignableFrom(to)) {

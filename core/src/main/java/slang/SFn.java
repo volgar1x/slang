@@ -40,7 +40,7 @@ public final class SFn implements SFunction {
     @Override
     public Object call(EvaluationContextInterface context, SList arguments) {
         registerArguments(context, arguments);
-        return operations.foldl(null, (operation, lastResult) -> context.evaluate(operation));
+        return operations.execute(context);
     }
 
     public SFn map(Function<SList, SList> function) {

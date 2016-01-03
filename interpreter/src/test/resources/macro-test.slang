@@ -1,5 +1,5 @@
 (defmacro if [bool block else]
-  '(case
+  '(cond
      (#bool #block)
      (:t #else)))
 

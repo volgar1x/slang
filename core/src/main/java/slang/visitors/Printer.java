@@ -24,6 +24,6 @@ public enum Printer implements Visitor<String> {
 
     @Override
     public String visitList(SList list) {
-        return list.stream().map(this).collect(Collectors.joining(" "));
+        return list.stream().map(this).collect(Collectors.joining());
     }
 }

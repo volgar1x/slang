@@ -49,17 +49,24 @@ public interface Visitor<R> extends Function<Object, R> {
 
     @Override
     default R apply(Object expression) {
+        if (expression instanceof Boolean) {
+            if ((Boolean) expression) {
+                return visitAtom(SAtom.of("true"));
+            } else {
+                return visitNil(Nil.NIL);
+            }
+        }
         if (expression instanceof SAtom) {
             return visitAtom((SAtom) expression);
         }
-        if (expression instanceof Double) {
-            return visitDecimal((double) expression);
+        if (expression instanceof Float || expression instanceof Double) {
+            return visitDecimal(((Number) expression).doubleValue());
         }
         if (expression instanceof SFunction) {
             return visitFunction((SFunction) expression);
         }
-        if (expression instanceof Long) {
-            return visitInteger((long) expression);
+        if (expression instanceof Byte || expression instanceof Short || expression instanceof Integer || expression instanceof Long) {
+            return visitInteger(((Number) expression).longValue());
         }
         if (expression == nil) {
             return visitNil(nil);
