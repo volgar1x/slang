@@ -5,12 +5,14 @@ import java.util.function.BiFunction;
 /**
  * @author Antoine Chauvin
  */
-public class NativeFunction implements SFunction {
+public final class NativeFunction implements SFunction {
     private final SAtom functionName;
     private final BiFunction<EvaluationContextInterface, SList, Object> pointer;
+    private final boolean evaluateArguments;
 
-    public NativeFunction(SAtom functionName, BiFunction<EvaluationContextInterface, SList, Object> pointer) {
+    public NativeFunction(SAtom functionName, boolean evaluateArguments, BiFunction<EvaluationContextInterface, SList, Object> pointer) {
         this.functionName = functionName;
+        this.evaluateArguments = evaluateArguments;
         this.pointer = pointer;
     }
 
@@ -22,5 +24,10 @@ public class NativeFunction implements SFunction {
     @Override
     public Object call(EvaluationContextInterface context, SList arguments) {
         return pointer.apply(context, arguments);
+    }
+
+    @Override
+    public boolean evaluateArguments() {
+        return evaluateArguments;
     }
 }

@@ -94,7 +94,7 @@ public final class SFn implements SFunction {
             return function;
         }
 
-        return new NativeFunction(function.getFunctionName(),
+        return new NativeFunction(function.getFunctionName(), function.evaluateArguments(),
                 (context, arguments) -> {
                     EvaluationContextInterface current = context.link();
                     function.registerArguments(current, arguments.map(current));
