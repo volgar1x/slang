@@ -12,6 +12,7 @@ public final class Stdlib {
         Bool.load(context);
         Num.load(context);
         List.load(context);
+        Code.load(context);
     }
 
     public static void loadFn(EvaluationContextInterface context, SAtom functionName, BiFunction<EvaluationContextInterface, SList, Object> pointer, boolean evaluateArguments) {

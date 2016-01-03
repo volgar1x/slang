@@ -1,12 +1,12 @@
 (defmacro if [cond block else]
-  '(case
+  '(cond
      (#cond #block)
-     (:t #else)))
+     ('else #else)))
 
 (defmacro unless [cond block else]
-  '(case
+  '(cond
      (#cond #block)
-     (:t #else)))
+     ('else #else)))
 
 (def fibo-rec [n acc next]
     (if (= n 0)
