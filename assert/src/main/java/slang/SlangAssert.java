@@ -16,10 +16,10 @@ public final class SlangAssert {
 
             if (!Truth.truthy(result)) {
                 String message = Inspector.inspect(arguments);
-                String expected = Inspector.inspect(arguments.tail().head());
-                String actual = Inspector.inspect(context.evaluate(arguments.tail().tail().head()));
+                Object lhs = context.evaluate(arguments.tail().head());
+                Object rhs = context.evaluate(arguments.tail().tail().head());
 
-                throw new AssertionError(AssertFormat.format(message, expected, actual));
+                throw new AssertionError(AssertFormat.format(message, Inspector.inspect(lhs), Inspector.inspect(rhs)));
             }
 
             return SAtom.of("true");

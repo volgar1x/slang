@@ -31,8 +31,8 @@ public final class MacroExpander extends EvaluationContext implements Visitor<Ob
     }
 
     @Override
-    public Object visitUnquote(SUnquote unquote) {
-        return read(unquote.name);
+    public Object visitQuote(SQuote quote) {
+        return new SQuote(evaluate(quote.quoted));
     }
 
     @Override
@@ -56,12 +56,33 @@ public final class MacroExpander extends EvaluationContext implements Visitor<Ob
             return SList.nil;
         }
 
-        if (!present(functionName)) {
+        if (!hasOwn(functionName)) {
             return list.map(this);
         }
 
         SFunction macro = (SFunction) read(functionName);
 
-        return evaluate(macro.call(getParent().link(), list.tail()));
+        EvaluationContextInterface context = getParent().link();
+        Object result = macro.call(context, list.tail());
+        return unquote(context, result);
+    }
+
+    private Object unquote(EvaluationContextInterface context, Object expression) {
+        return new Visitor<Object>() {
+            @Override
+            public Object otherwise(Object expression) {
+                return expression;
+            }
+
+            @Override
+            public Object visitUnquote(SUnquote unquote) {
+                return context.read(unquote.name);
+            }
+
+            @Override
+            public Object visitMany(SMany many) {
+                return many.map(this);
+            }
+        }.apply(expression);
     }
 }

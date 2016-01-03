@@ -34,7 +34,7 @@ public final class Core {
     public static Object def(EvaluationContextInterface context, SList arguments) {
         SFn function = SFn.fromList(arguments);
         context.register(function.getFunctionName(), function);
-        return function.getFunctionName();
+        return new SQuote(function.getFunctionName());
     }
 
     public static Object inspect(EvaluationContextInterface context, SList arguments) {

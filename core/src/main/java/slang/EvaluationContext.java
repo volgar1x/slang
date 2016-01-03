@@ -54,6 +54,11 @@ public abstract class EvaluationContext implements EvaluationContextInterface {
     }
 
     @Override
+    public boolean hasOwn(SAtom identifier) {
+        return expressions.containsKey(identifier);
+    }
+
+    @Override
     public void register(SAtom identifier, Object expression) {
         expressions.put(identifier, expression);
     }
