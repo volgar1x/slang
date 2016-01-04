@@ -19,4 +19,4 @@
       last-result
       (loop (- n 1) (eval ops) ops)))
 
-(loop 1000 0 '(fibo 100))
+(loop 100000 0 '(fibo 100))
