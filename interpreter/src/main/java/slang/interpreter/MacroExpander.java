@@ -50,7 +50,8 @@ public final class MacroExpander extends EvaluationContext implements Visitor<Ob
 
         if (functionName.equals(SAtom.of("defmacro"))) {
             SFn macro = SFn.fromList(list.tail());
-            register(macro.getFunctionName(), macro);
+            SFunction function = SFn.tailCallOptimized(macro);
+            register(function.getFunctionName(), function);
             return SList.nil;
         }
 
