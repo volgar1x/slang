@@ -64,6 +64,11 @@ public class TokenizerTest {
         assertEquals(ConstToken.QUOTE, tokenizer.next());
         assertEquals(Token.of("quoted"), tokenizer.next());
 
+        assertEquals(ConstToken.START_MAP, tokenizer.next());
+        assertEquals(Token.of("some"), tokenizer.next());
+        assertEquals(Token.of("map"), tokenizer.next());
+        assertEquals(ConstToken.END_MAP, tokenizer.next());
+
         assertEquals(ConstToken.START_SET, tokenizer.next());
         assertEquals(Token.of("some"), tokenizer.next());
         assertEquals(Token.of("set"), tokenizer.next());

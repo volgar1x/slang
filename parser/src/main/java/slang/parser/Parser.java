@@ -33,6 +33,8 @@ public final class Parser implements Iterator<Object> {
             switch ((ConstToken) token) {
                 case START_LIST:
                     return nextMany(SList.builder(), ConstToken.END_LIST);
+                case START_MAP:
+                    return nextMap(SHashMap.builder(), ConstToken.END_MAP);
                 case START_SET:
                     return nextMany(SSet.builder(), ConstToken.END_SET);
                 case START_VECTOR:
@@ -73,6 +75,20 @@ public final class Parser implements Iterator<Object> {
             }
             Object expression = next(token);
             builder.add(expression);
+        }
+        return builder.build();
+    }
+
+    private SMap nextMap(SMap.Builder builder, ConstToken delim) {
+        TokenInterface token;
+        while (true) {
+            token = tokenizer.next();
+            if (token.equals(delim)) {
+                break;
+            }
+            Object key = next(token);
+            Object value = next();
+            builder.add(key, value);
         }
         return builder.build();
     }

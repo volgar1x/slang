@@ -12,12 +12,13 @@ import java.util.LinkedList;
 public final class Tokenizer implements Iterator<TokenInterface> {
     private final InputStream stream;
 
-    private boolean string;
+    private boolean string, set;
     private final Deque<TokenInterface> queued;
 
     public Tokenizer(InputStream stream) {
         this.stream = stream;
         this.string = false;
+        this.set = false;
         this.queued = new LinkedList<>();
     }
 
@@ -70,9 +71,9 @@ public final class Tokenizer implements Iterator<TokenInterface> {
             }
             string = false;
             if (chr == -1) {
-                queued.addLast(ConstToken.EOF);
+                queued.addFirst(ConstToken.EOF);
             } else {
-                queued.addLast(ConstToken.DOUBLE_QUOTE);
+                queued.addFirst(ConstToken.DOUBLE_QUOTE);
             }
             return Token.of(buf.toString());
         }
@@ -87,12 +88,24 @@ public final class Tokenizer implements Iterator<TokenInterface> {
             case -1:   return ConstToken.EOF;
             case '(':  return ConstToken.START_LIST;
             case ')':  return ConstToken.END_LIST;
-            case '{':  return ConstToken.START_SET;
-            case '}':  return ConstToken.END_SET;
+            case '{':  return ConstToken.START_MAP;
+            case '}':
+                if (set) {
+                    set = false;
+                    return ConstToken.END_SET;
+                }
+                return ConstToken.END_MAP;
             case '[':  return ConstToken.START_VECTOR;
             case ']':  return ConstToken.END_VECTOR;
             case '\'': return ConstToken.QUOTE;
-            case '#':  return ConstToken.UNQUOTE;
+            case '#':
+                TokenInterface nextToken = safeNext();
+                if (nextToken == ConstToken.START_MAP) {
+                    set = true;
+                    return ConstToken.START_SET;
+                }
+                queued.addFirst(nextToken);
+                return ConstToken.UNQUOTE;
 
             case '"':
                 string = true;
@@ -105,7 +118,7 @@ public final class Tokenizer implements Iterator<TokenInterface> {
             chr = stream.read();
         }
         if (isEndingToken(chr)) {
-            queued.addLast(asEndingToken(chr));
+            queued.addFirst(asEndingToken(chr));
         }
 
         return Token.of(buf.toString());
@@ -115,13 +128,24 @@ public final class Tokenizer implements Iterator<TokenInterface> {
         switch (chr) {
             case -1:  return ConstToken.EOF;
             case ')': return ConstToken.END_LIST;
-            case '}': return ConstToken.END_SET;
+            case '}':
+                if (set) {
+                    set = false;
+                    return ConstToken.END_SET;
+                }
+                return ConstToken.END_MAP;
             case ']': return ConstToken.END_VECTOR;
             default:  return null;
         }
     }
 
     private boolean isEndingToken(int chr) {
-        return asEndingToken(chr) != null;
+        switch (chr) {
+            case ')':
+            case '}':
+            case ']':
+                return true;
+        }
+        return false;
     }
 }

@@ -8,6 +8,8 @@ public enum ConstToken implements TokenInterface {
     END_LIST,
     START_SET,
     END_SET,
+    START_MAP,
+    END_MAP,
     START_VECTOR,
     END_VECTOR,
     QUOTE,
