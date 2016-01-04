@@ -41,6 +41,15 @@ public final class SHashMap extends HashMap<Object, Object> implements SMap {
     }
 
     @Override
+    public Object get(Object key) {
+        Object value = super.get(key);
+        if (value == null) {
+            return SList.nil;
+        }
+        return value;
+    }
+
+    @Override
     public SMap with(Object key, Object value) {
         SHashMap result = new SHashMap();
         result._putAll(this);

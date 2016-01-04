@@ -49,3 +49,9 @@
 (def call-lambda-function [fun] (* 2 (fun)))
 
 (assert = 42 (call-lambda-function (fn [] (+ 12 9))))
+
+(let [map {"a" 1}]
+  (assert = 1 (.get map "a"))
+  (let [new-map (.with map "b" 2)]
+    (assert = 2 (.get new-map "b"))
+    (assert = nil (.get map "b"))))
