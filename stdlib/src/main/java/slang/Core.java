@@ -34,8 +34,9 @@ public final class Core {
 
     public static Object def(EvaluationContextInterface context, SList arguments) {
         SFn function = SFn.fromList(arguments);
-        context.register(function.getFunctionName(), function);
-        return new SQuote(function.getFunctionName());
+        SFunction fn = SFn.tailCallOptimized(function);
+        context.register(fn.getFunctionName(), fn);
+        return new SQuote(fn.getFunctionName());
     }
 
     public static Object inspect(EvaluationContextInterface context, SList arguments) {
