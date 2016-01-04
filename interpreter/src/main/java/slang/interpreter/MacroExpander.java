@@ -60,24 +60,7 @@ public final class MacroExpander extends EvaluationContext implements Visitor<Ob
 
         SFunction macro = (SFunction) read(functionName);
 
-        class test extends Interpreter {
-
-            test(EvaluationContextInterface parent) {
-                super(parent);
-            }
-
-            @Override
-            public EvaluationContextInterface link() {
-                return new test(this);
-            }
-
-            @Override
-            public Object visitQuote(SQuote quote) {
-                return MacroExpander.this.apply(unquote(this, quote.quoted));
-            }
-        }
-
-        return macro.call(new test(this), list.tail());
+        return macro.call(new UnquotingInterpreter(this), list.tail());
     }
 
     private Object unquote(EvaluationContextInterface context, Object expression) {
@@ -97,5 +80,29 @@ public final class MacroExpander extends EvaluationContext implements Visitor<Ob
                 return many.map(this);
             }
         }.apply(expression);
+    }
+
+    private static class UnquotingInterpreter extends Interpreter {
+
+        private final MacroExpander expander;
+
+        UnquotingInterpreter(EvaluationContextInterface parent, MacroExpander expander) {
+            super(parent);
+            this.expander = expander;
+        }
+
+        UnquotingInterpreter(MacroExpander expander) {
+            this(expander, expander);
+        }
+
+        @Override
+        public EvaluationContextInterface link() {
+            return new UnquotingInterpreter(this, expander);
+        }
+
+        @Override
+        public Object visitQuote(SQuote quote) {
+            return expander.apply(expander.unquote(this, quote.quoted));
+        }
     }
 }
