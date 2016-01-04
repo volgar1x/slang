@@ -13,3 +13,18 @@
 
 (assert = 'enough (is-enough-potatos 69))
 (assert = 'not-enough (is-enough-potatos 0))
+
+(defmacro print-vars-rec [xs acc]
+  (cond
+    ((nil? xs) (.reverse acc))
+    ('else
+      (print-vars-rec (cdr xs)
+          (cons
+		    (let [var (car xs) var-name (.toString var)]
+		      '(println #var-name "=" #var))
+		    acc)))))
+
+(defmacro print-vars [& vars] (print-vars-rec vars ()))
+
+(let [foo "bar" buzz 42]
+  (print-vars foo buzz))

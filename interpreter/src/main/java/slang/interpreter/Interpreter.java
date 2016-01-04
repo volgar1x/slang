@@ -12,13 +12,13 @@ import java.util.stream.Collectors;
 /**
  * @author Antoine Chauvin
  */
-public final class Interpreter extends EvaluationContext implements Visitor<Object> {
+public class Interpreter extends EvaluationContext implements Visitor<Object> {
     public Interpreter(ClassLoader classLoader, InputStream stdin, PrintStream stdout, PrintStream stderr) {
         super(classLoader, stdin, stdout, stderr);
         Stdlib.load(this);
     }
 
-    private Interpreter(EvaluationContextInterface parent) {
+    Interpreter(EvaluationContextInterface parent) {
         super(parent);
     }
 
@@ -59,6 +59,9 @@ public final class Interpreter extends EvaluationContext implements Visitor<Obje
 
     @Override
     public Object visitList(SList list) {
+        if (list.stream().allMatch(x -> x instanceof SList)) {
+            return list.map(this);
+        }
         SAtom functionName = (SAtom) list.head();
 
         if (isJavaConstructor(functionName)) {

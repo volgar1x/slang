@@ -68,7 +68,7 @@ public final class SFn implements SFunction {
 
     public static SFunction tailCallOptimized(SFn function) {
         Object lastExpression = function.operations.last();
-        if (!isFunctionCallTo(lastExpression, SAtom.of("case"))) {
+        if (!isFunctionCallTo(lastExpression, SAtom.of("cond"))) {
             return function;
         }
         SList last = (SList) lastExpression;
@@ -101,7 +101,7 @@ public final class SFn implements SFunction {
         return new NativeFunction(function.getFunctionName(), function.evaluateArguments(),
                 (context, arguments) -> {
                     EvaluationContextInterface current = context.link();
-                    function.registerArguments(current, arguments.map(current));
+                    function.registerArguments(current, arguments);
 
                     while (!truthy(current.evaluate(cond))) {
                         current.evaluate(body);

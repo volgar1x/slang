@@ -1,12 +1,10 @@
-package slang.parser;
+package slang;
 
 import org.junit.Before;
 import org.junit.Test;
-import slang.EvaluationContext;
-import slang.MockInputStream;
-import slang.MockOutputStream;
-import slang.SlangAssert;
 import slang.interpreter.Interpreter;
+import slang.interpreter.MacroExpander;
+import slang.parser.Parser;
 import slang.tokenizer.Tokenizer;
 
 import java.io.PrintStream;

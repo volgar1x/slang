@@ -25,6 +25,11 @@ public enum Inspector implements Visitor<String> {
     }
 
     @Override
+    public String visitString(String string) {
+        return "\"" + string + "\"";
+    }
+
+    @Override
     public String visitUnquote(SUnquote unquote) {
         return "#" + unquote.name;
     }
@@ -43,5 +48,7 @@ public enum Inspector implements Visitor<String> {
     public String visitVector(SVector vector) {
         return vector.stream().map(this).collect(Collectors.joining(" ", "[", "]"));
     }
+
+
 
 }

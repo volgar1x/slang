@@ -1,4 +1,4 @@
-package slang.parser;
+package slang.interpreter;
 
 import slang.*;
 
@@ -50,9 +50,7 @@ public final class MacroExpander extends EvaluationContext implements Visitor<Ob
 
         if (functionName.equals(SAtom.of("defmacro"))) {
             SFn macro = SFn.fromList(list.tail());
-            SFn newMacro = macro.map(x -> x.map(this));
-            SFunction function = SFn.tailCallOptimized(newMacro);
-            register(function.getFunctionName(), function);
+            register(macro.getFunctionName(), macro);
             return SList.nil;
         }
 
@@ -62,9 +60,24 @@ public final class MacroExpander extends EvaluationContext implements Visitor<Ob
 
         SFunction macro = (SFunction) read(functionName);
 
-        EvaluationContextInterface context = getParent().link();
-        Object result = macro.call(context, list.tail());
-        return unquote(context, result);
+        class test extends Interpreter {
+
+            test(EvaluationContextInterface parent) {
+                super(parent);
+            }
+
+            @Override
+            public EvaluationContextInterface link() {
+                return new test(this);
+            }
+
+            @Override
+            public Object visitQuote(SQuote quote) {
+                return MacroExpander.this.apply(unquote(this, quote.quoted));
+            }
+        }
+
+        return macro.call(new test(this), list.tail());
     }
 
     private Object unquote(EvaluationContextInterface context, Object expression) {

@@ -10,6 +10,7 @@ public final class Bool {
         Stdlib.loadFn(context, SAtom.of("="), Bool::eq, true);
         Stdlib.loadFn(context, SAtom.of("not"), Bool::not, true);
         Stdlib.loadFn(context, SAtom.of("<="), Bool::gte, true);
+        Stdlib.loadFn(context, SAtom.of("nil?"), Bool::nilTest, true);
     }
 
     public static Object eq(EvaluationContextInterface context, SList arguments) {
@@ -49,5 +50,13 @@ public final class Bool {
 
         //noinspection unchecked
         return ((Comparable) lhs).compareTo(rhs) >= 0 ? SAtom.of("true") : SList.nil;
+    }
+
+    public static Object nilTest(EvaluationContextInterface context, SList arguments) {
+        if (arguments.head() == SList.nil) {
+            return SAtom.of("true");
+        } else {
+            return SList.nil;
+        }
     }
 }

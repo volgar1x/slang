@@ -29,7 +29,12 @@ public interface SList extends List<Object>, SMany {
     }
 
     default SList init() {
-        throw new UnsupportedOperationException("todo");
+        SList acc = nil;
+        SList cur = this;
+        while (cur.tail() != nil) {
+            acc = acc.push(cur.head());
+        }
+        return acc.reverse();
     }
 
     default SList reverse() {

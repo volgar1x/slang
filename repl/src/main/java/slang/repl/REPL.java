@@ -5,7 +5,7 @@ import slang.SException;
 import slang.SFunction;
 import slang.SList;
 import slang.interpreter.Interpreter;
-import slang.parser.MacroExpander;
+import slang.interpreter.MacroExpander;
 import slang.parser.Parser;
 import slang.tokenizer.Tokenizer;
 import slang.visitors.Inspector;
