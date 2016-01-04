@@ -129,4 +129,38 @@ public final class SHashMap extends HashMap<Object, Object> implements SMap {
     public void replaceAll(BiFunction<? super Object, ? super Object, ?> function) {
         throw new UnsupportedOperationException();
     }
+
+    public static SHashMap of() {
+        return new SHashMap();
+    }
+
+    public static SHashMap of(Object key0, Object value0) {
+        Builder builder = builder();
+        builder.add(key0, value0);
+        return builder.build();
+    }
+
+    public static SHashMap of(Object key0, Object value0, Object key1, Object value1) {
+        Builder builder = builder();
+        builder.add(key0, value0);
+        builder.add(key1, value1);
+        return builder.build();
+    }
+
+    public static SHashMap of(Object key0, Object value0, Object key1, Object value1, Object key2, Object value2) {
+        Builder builder = builder();
+        builder.add(key0, value0);
+        builder.add(key1, value1);
+        builder.add(key2, value2);
+        return builder.build();
+    }
+
+    public static SHashMap of(Object key0, Object value0, Object key1, Object value1, Object key2, Object value2, Object key3, Object value3) {
+        Builder builder = builder();
+        builder.add(key0, value0);
+        builder.add(key1, value1);
+        builder.add(key2, value2);
+        builder.add(key3, value3);
+        return builder.build();
+    }
 }
