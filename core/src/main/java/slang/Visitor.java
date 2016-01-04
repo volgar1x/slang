@@ -49,6 +49,9 @@ public interface Visitor<R> extends Function<Object, R> {
 
     @Override
     default R apply(Object expression) {
+        if (expression == null) {
+            return visitNil(Nil.NIL);
+        }
         if (expression instanceof Boolean) {
             if ((Boolean) expression) {
                 return visitAtom(SAtom.of("true"));
