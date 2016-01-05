@@ -2,14 +2,21 @@ package slang;
 
 import slang.visitors.Truth;
 
+import java.util.function.IntPredicate;
+
 /**
  * @author Antoine Chauvin
  */
 public final class Bool {
     public static void load(EvaluationContextInterface context) {
         Stdlib.loadFn(context, SAtom.of("="), Bool::eq, true);
+        Stdlib.loadFn(context, SAtom.of("!="), Bool::neq, true);
         Stdlib.loadFn(context, SAtom.of("not"), Bool::not, true);
-        Stdlib.loadFn(context, SAtom.of("<="), Bool::gte, true);
+        Stdlib.loadFn(context, SAtom.of("<="), Bool::lte, true);
+        Stdlib.loadFn(context, SAtom.of("<"), Bool::lt, true);
+        Stdlib.loadFn(context, SAtom.of(">="), Bool::gte, true);
+        Stdlib.loadFn(context, SAtom.of(">"), Bool::gt, true);
+        Stdlib.loadFn(context, SAtom.of("truth?"), Bool::truthTest, true);
         Stdlib.loadFn(context, SAtom.of("nil?"), Bool::nilTest, true);
         Stdlib.loadFn(context, SAtom.of("many?"), Bool::manyTest, true);
         Stdlib.loadFn(context, SAtom.of("list?"), Bool::listTest, true);
@@ -36,6 +43,19 @@ public final class Bool {
         return lhs.equals(rhs);
     }
 
+    public static Object neq(EvaluationContextInterface context, SList arguments) {
+        Object lhs = arguments.head();
+        Object rhs = arguments.tail().head();
+
+        if (lhs instanceof Number && rhs instanceof Number) {
+            long l = ((Number) lhs).longValue();
+            long r = ((Number) rhs).longValue();
+            return l != r;
+        }
+
+        return !lhs.equals(rhs);
+    }
+
     public static Object not(EvaluationContextInterface context, SList arguments) {
         if (Truth.truthy(arguments.head())) {
             return SAtom.of("true");
@@ -44,7 +64,11 @@ public final class Bool {
         }
     }
 
-    public static Object gte(EvaluationContextInterface context, SList arguments) {
+    private static Object _bool(boolean b) {
+        return b ? SAtom.of("true") : SList.nil;
+    }
+
+    private static Object _cmp(SList arguments, IntPredicate function) {
         Object lhs = arguments.head();
         Object rhs = arguments.tail().head();
 
@@ -59,11 +83,27 @@ public final class Bool {
         }
 
         //noinspection unchecked
-        return ((Comparable) lhs).compareTo(rhs) >= 0 ? SAtom.of("true") : SList.nil;
+        return _bool(function.test(((Comparable) lhs).compareTo(rhs)));
     }
 
-    private static Object _bool(boolean b) {
-        return b ? SAtom.of("true") : SList.nil;
+    public static Object lte(EvaluationContextInterface context, SList arguments) {
+        return _cmp(arguments, x -> x <= 0);
+    }
+
+    public static Object lt(EvaluationContextInterface context, SList arguments) {
+        return _cmp(arguments, x -> x < 0);
+    }
+
+    public static Object gte(EvaluationContextInterface context, SList arguments) {
+        return _cmp(arguments, x -> x >= 0);
+    }
+
+    public static Object gt(EvaluationContextInterface context, SList arguments) {
+        return _cmp(arguments, x -> x > 0);
+    }
+
+    public static Object truthTest(EvaluationContextInterface context, SList arguments) {
+        return _bool(Truth.truthy(arguments.head()));
     }
 
     public static Object nilTest(EvaluationContextInterface context, SList arguments) {
