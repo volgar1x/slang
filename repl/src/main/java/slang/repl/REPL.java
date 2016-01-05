@@ -99,6 +99,9 @@ public final class REPL {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(stdin));
 
                 buf = reader.readLine();
+                if (buf != null) {
+                    buf += "\n";
+                }
                 pos = 0;
                 eof = buf == null;
             }
