@@ -30,6 +30,10 @@ public final class Bool {
         Stdlib.loadFn(context, SAtom.of("fn?"), Bool::fnTest, true);
     }
 
+    private static Object _bool(boolean b) {
+        return b ? SAtom.of("true") : SList.nil;
+    }
+
     public static Object eq(EvaluationContextInterface context, SList arguments) {
         Object lhs = arguments.head();
         Object rhs = arguments.tail().head();
@@ -37,10 +41,10 @@ public final class Bool {
         if (lhs instanceof Number && rhs instanceof Number) {
             long l = ((Number) lhs).longValue();
             long r = ((Number) rhs).longValue();
-            return l == r;
+            return _bool(l == r);
         }
 
-        return lhs.equals(rhs);
+        return _bool(lhs.equals(rhs));
     }
 
     public static Object neq(EvaluationContextInterface context, SList arguments) {
@@ -50,22 +54,14 @@ public final class Bool {
         if (lhs instanceof Number && rhs instanceof Number) {
             long l = ((Number) lhs).longValue();
             long r = ((Number) rhs).longValue();
-            return l != r;
+            return _bool(l != r);
         }
 
-        return !lhs.equals(rhs);
+        return _bool(!lhs.equals(rhs));
     }
 
     public static Object not(EvaluationContextInterface context, SList arguments) {
-        if (Truth.truthy(arguments.head())) {
-            return SAtom.of("true");
-        } else {
-            return SList.nil;
-        }
-    }
-
-    private static Object _bool(boolean b) {
-        return b ? SAtom.of("true") : SList.nil;
+        return _bool(!Truth.truthy(arguments.head()));
     }
 
     private static Object _cmp(SList arguments, IntPredicate function) {
