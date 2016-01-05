@@ -15,6 +15,7 @@ public final class Core {
         Stdlib.loadFn(context, SName.of("cond"), Core::cond, false);
         Stdlib.loadFn(context, SName.of("inspect"), Core::inspect, true);
         Stdlib.loadFn(context, SName.of("fn"), Core::fn, false);
+        Stdlib.loadFn(context, SName.of("do"), Core::do_, false);
     }
 
     public static Object let(EvaluationContextInterface context, SList arguments) {
@@ -57,5 +58,9 @@ public final class Core {
 
     public static Object fn(EvaluationContextInterface context, SList arguments) {
         return SFn.fromList(SName.of("%"), arguments);
+    }
+
+    public static Object do_(EvaluationContextInterface context, SList arguments) {
+        return arguments.execute(context);
     }
 }
