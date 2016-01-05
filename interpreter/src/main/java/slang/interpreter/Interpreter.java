@@ -62,29 +62,38 @@ public class Interpreter extends EvaluationContext implements Visitor<Object> {
         if (list.stream().allMatch(x -> x instanceof SList)) {
             return list.map(this);
         }
-        SName functionName = (SName) list.head();
 
-        if (isJavaConstructor(functionName)) {
-            return doJavaConstructor(functionName, list.tail().map(this));
-        } else if (isJavaInstanceMethodCall(functionName)) {
-            return doJavaInstanceMethodCall(functionName, list.tail().map(this));
-        } else if (isJavaStaticFunctionCall(functionName)) {
-            return doJavaStaticMethodCall(functionName, list.tail().map(this));
-        } else if (isJavaStaticFieldCall(functionName)) {
-            return doJavaStaticFieldCall(functionName);
+        SFunction function;
+
+        if (list.head() instanceof SFunction) {
+            function = (SFunction) list.head();
+        } else if (list.head() instanceof SName) {
+            SName functionName = (SName) list.head();
+
+            if (isJavaConstructor(functionName)) {
+                return doJavaConstructor(functionName, list.tail().map(this));
+            } else if (isJavaInstanceMethodCall(functionName)) {
+                return doJavaInstanceMethodCall(functionName, list.tail().map(this));
+            } else if (isJavaStaticFunctionCall(functionName)) {
+                return doJavaStaticMethodCall(functionName, list.tail().map(this));
+            } else if (isJavaStaticFieldCall(functionName)) {
+                return doJavaStaticFieldCall(functionName);
+            }
+
+            if (!present(functionName)) {
+                throw new SException(String.format("undefined function `%s'", functionName));
+            }
+
+            Object var = read(functionName);
+
+            if (!(var instanceof SFunction)) {
+                throw new SException(String.format("function `%s':%s is not callable", functionName, var.getClass().getSimpleName()));
+            }
+
+            function = (SFunction) var;
+        } else {
+            throw new IllegalArgumentException(String.format("%s is not a function", list.head()));
         }
-
-        if (!present(functionName)) {
-            throw new SException(String.format("undefined function `%s'", functionName));
-        }
-
-        Object var = read(functionName);
-
-        if (!(var instanceof SFunction)) {
-            throw new SException(String.format("function `%s':%s is not callable", functionName, var.getClass().getSimpleName()));
-        }
-
-        SFunction function = (SFunction) var;
 
         if (function.evaluateArguments()) {
             return function.call(link(), list.tail().map(this));

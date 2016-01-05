@@ -3,7 +3,7 @@ package slang;
 /**
  * @author Antoine Chauvin
  */
-public class SAtom {
+public final class SAtom implements SFunction {
     private final String string;
 
     private SAtom(String string) {
@@ -31,5 +31,26 @@ public class SAtom {
 
     public static SAtom of(String string) {
         return new SAtom(string);
+    }
+
+    @Override
+    public SName getFunctionName() {
+        return SName.of(string);
+    }
+
+    @Override
+    public boolean evaluateArguments() {
+        return true;
+    }
+
+    @Override
+    public Object call(EvaluationContextInterface context, SList arguments) {
+        Object argument = arguments.head();
+
+        if (argument instanceof SMap) {
+            return ((SMap) argument).get(this);
+        }
+
+        throw new IllegalArgumentException(String.format("%s is not indexable", argument));
     }
 }
