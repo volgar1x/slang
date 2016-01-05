@@ -2,6 +2,7 @@ package slang.visitors;
 
 import slang.*;
 
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -17,6 +18,15 @@ public enum Inspector implements Visitor<String> {
     @Override
     public String otherwise(Object expression) {
         return expression.toString();
+    }
+
+    @Override
+    public String visitAtom(SAtom atom) {
+        String string = atom.toString();
+        if (string.equalsIgnoreCase("true")) {
+            return "true";
+        }
+        return ":" + string;
     }
 
     @Override
@@ -37,6 +47,17 @@ public enum Inspector implements Visitor<String> {
     @Override
     public String visitList(SList list) {
         return list.stream().map(this).collect(Collectors.joining(" ", "(", ")"));
+    }
+
+    @Override
+    public String visitMap(SMap map) {
+        StringBuilder builder = new StringBuilder();
+        builder.append('{');
+        for (Map.Entry<Object, Object> entry : map.entrySet()) {
+            builder.append(apply(entry.getKey())).append(' ').append(apply(entry.getValue()));
+        }
+        builder.append('}');
+        return builder.toString();
     }
 
     @Override

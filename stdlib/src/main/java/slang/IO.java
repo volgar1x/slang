@@ -11,9 +11,9 @@ import java.io.InputStreamReader;
  */
 public final class IO {
     public static void load(EvaluationContextInterface context) {
-        Stdlib.loadFn(context, SAtom.of("println"), IO::println, true);
-        Stdlib.loadFn(context, SAtom.of("print"), IO::print, true);
-        Stdlib.loadFn(context, SAtom.of("readln"), IO::readln, true);
+        Stdlib.loadFn(context, SName.of("println"), IO::println, true);
+        Stdlib.loadFn(context, SName.of("print"), IO::print, true);
+        Stdlib.loadFn(context, SName.of("readln"), IO::readln, true);
     }
 
     public static Object println(EvaluationContextInterface context, SList arguments) {

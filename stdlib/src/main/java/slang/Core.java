@@ -10,11 +10,11 @@ import java.util.stream.Collectors;
  */
 public final class Core {
     public static void load(EvaluationContextInterface context) {
-        Stdlib.loadFn(context, SAtom.of("let"), Core::let, false);
-        Stdlib.loadFn(context, SAtom.of("def"), Core::def, false);
-        Stdlib.loadFn(context, SAtom.of("cond"), Core::cond, false);
-        Stdlib.loadFn(context, SAtom.of("inspect"), Core::inspect, true);
-        Stdlib.loadFn(context, SAtom.of("fn"), Core::fn, false);
+        Stdlib.loadFn(context, SName.of("let"), Core::let, false);
+        Stdlib.loadFn(context, SName.of("def"), Core::def, false);
+        Stdlib.loadFn(context, SName.of("cond"), Core::cond, false);
+        Stdlib.loadFn(context, SName.of("inspect"), Core::inspect, true);
+        Stdlib.loadFn(context, SName.of("fn"), Core::fn, false);
     }
 
     public static Object let(EvaluationContextInterface context, SList arguments) {
@@ -23,7 +23,7 @@ public final class Core {
 
         EvaluationContextInterface subcontext = context.link();
         for (int i = 0; i < bindings.size(); i += 2) {
-            SAtom name = (SAtom) bindings.get(i);
+            SName name = (SName) bindings.get(i);
             Object expression = bindings.get(i + 1);
 
             subcontext.register(name, subcontext.evaluate(expression));
@@ -56,6 +56,6 @@ public final class Core {
     }
 
     public static Object fn(EvaluationContextInterface context, SList arguments) {
-        return SFn.fromList(SAtom.of("%"), arguments);
+        return SFn.fromList(SName.of("%"), arguments);
     }
 }

@@ -8,8 +8,8 @@ public interface SFunction {
 
     Object call(EvaluationContextInterface context, SList arguments);
 
-    default SAtom getFunctionName() {
-        return SAtom.of("undefined");
+    default SName getFunctionName() {
+        return SName.of("undefined");
     }
 
     default boolean evaluateArguments() {

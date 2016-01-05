@@ -15,7 +15,7 @@ public final class Stdlib {
         Code.load(context);
     }
 
-    public static void loadFn(EvaluationContextInterface context, SAtom functionName, BiFunction<EvaluationContextInterface, SList, Object> pointer, boolean evaluateArguments) {
+    public static void loadFn(EvaluationContextInterface context, SName functionName, BiFunction<EvaluationContextInterface, SList, Object> pointer, boolean evaluateArguments) {
         context.register(functionName, new NativeFunction(functionName, evaluateArguments, pointer));
     }
 }

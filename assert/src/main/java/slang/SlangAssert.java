@@ -11,7 +11,7 @@ public final class SlangAssert {
     private SlangAssert() {}
 
     public static void load(EvaluationContextInterface loadContext) {
-        loadContext.register(SAtom.of("assert"), (SFunction) (context, arguments) -> {
+        loadContext.register(SName.of("assert"), (SFunction) (context, arguments) -> {
             Object result = context.evaluate(arguments);
 
             if (!Truth.truthy(result)) {

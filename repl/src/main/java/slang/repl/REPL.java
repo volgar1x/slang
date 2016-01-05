@@ -1,6 +1,6 @@
 package slang.repl;
 
-import slang.SAtom;
+import slang.SName;
 import slang.SException;
 import slang.SFunction;
 import slang.SList;
@@ -30,7 +30,7 @@ public final class REPL {
         this.parser = parser;
         this.verbose = verbose;
 
-        this.interpreter.register(SAtom.of("kill"), (SFunction) (context, arguments) -> {
+        this.interpreter.register(SName.of("kill"), (SFunction) (context, arguments) -> {
             this.alive = false;
             return SList.nil;
         });

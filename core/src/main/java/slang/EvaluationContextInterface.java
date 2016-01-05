@@ -11,10 +11,10 @@ public interface EvaluationContextInterface extends UnaryOperator<Object> {
     EvaluationContextInterface link();
     Object evaluate(Object expression);
 
-    Object read(SAtom identifier);
-    boolean present(SAtom identifier);
-    boolean hasOwn(SAtom identifier);
-    void register(SAtom identifier, Object expression);
+    Object read(SName identifier);
+    boolean present(SName identifier);
+    boolean hasOwn(SName identifier);
+    void register(SName identifier, Object expression);
 
     ClassLoader getClassLoader();
     InputStream getStandardInput();

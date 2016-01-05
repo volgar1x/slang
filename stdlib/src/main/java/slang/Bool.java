@@ -9,25 +9,25 @@ import java.util.function.IntPredicate;
  */
 public final class Bool {
     public static void load(EvaluationContextInterface context) {
-        Stdlib.loadFn(context, SAtom.of("="), Bool::eq, true);
-        Stdlib.loadFn(context, SAtom.of("!="), Bool::neq, true);
-        Stdlib.loadFn(context, SAtom.of("not"), Bool::not, true);
-        Stdlib.loadFn(context, SAtom.of("<="), Bool::lte, true);
-        Stdlib.loadFn(context, SAtom.of("<"), Bool::lt, true);
-        Stdlib.loadFn(context, SAtom.of(">="), Bool::gte, true);
-        Stdlib.loadFn(context, SAtom.of(">"), Bool::gt, true);
-        Stdlib.loadFn(context, SAtom.of("truth?"), Bool::truthTest, true);
-        Stdlib.loadFn(context, SAtom.of("nil?"), Bool::nilTest, true);
-        Stdlib.loadFn(context, SAtom.of("many?"), Bool::manyTest, true);
-        Stdlib.loadFn(context, SAtom.of("list?"), Bool::listTest, true);
-        Stdlib.loadFn(context, SAtom.of("map?"), Bool::mapTest, true);
-        Stdlib.loadFn(context, SAtom.of("set?"), Bool::setTest, true);
-        Stdlib.loadFn(context, SAtom.of("vec?"), Bool::vecTest, true);
-        Stdlib.loadFn(context, SAtom.of("int?"), Bool::intTest, true);
-        Stdlib.loadFn(context, SAtom.of("dec?"), Bool::decTest, true);
-        Stdlib.loadFn(context, SAtom.of("str?"), Bool::strTest, true);
-        Stdlib.loadFn(context, SAtom.of("atom?"), Bool::atomTest, true);
-        Stdlib.loadFn(context, SAtom.of("fn?"), Bool::fnTest, true);
+        Stdlib.loadFn(context, SName.of("="), Bool::eq, true);
+        Stdlib.loadFn(context, SName.of("!="), Bool::neq, true);
+        Stdlib.loadFn(context, SName.of("not"), Bool::not, true);
+        Stdlib.loadFn(context, SName.of("<="), Bool::lte, true);
+        Stdlib.loadFn(context, SName.of("<"), Bool::lt, true);
+        Stdlib.loadFn(context, SName.of(">="), Bool::gte, true);
+        Stdlib.loadFn(context, SName.of(">"), Bool::gt, true);
+        Stdlib.loadFn(context, SName.of("truth?"), Bool::truthTest, true);
+        Stdlib.loadFn(context, SName.of("nil?"), Bool::nilTest, true);
+        Stdlib.loadFn(context, SName.of("many?"), Bool::manyTest, true);
+        Stdlib.loadFn(context, SName.of("list?"), Bool::listTest, true);
+        Stdlib.loadFn(context, SName.of("map?"), Bool::mapTest, true);
+        Stdlib.loadFn(context, SName.of("set?"), Bool::setTest, true);
+        Stdlib.loadFn(context, SName.of("vec?"), Bool::vecTest, true);
+        Stdlib.loadFn(context, SName.of("int?"), Bool::intTest, true);
+        Stdlib.loadFn(context, SName.of("dec?"), Bool::decTest, true);
+        Stdlib.loadFn(context, SName.of("str?"), Bool::strTest, true);
+        Stdlib.loadFn(context, SName.of("atom?"), Bool::atomTest, true);
+        Stdlib.loadFn(context, SName.of("fn?"), Bool::fnTest, true);
     }
 
     private static Object _bool(boolean b) {
@@ -142,7 +142,7 @@ public final class Bool {
     }
 
     public static Object atomTest(EvaluationContextInterface context, SList arguments) {
-        return _bool(arguments.head() instanceof SAtom);
+        return _bool(arguments.head() instanceof SName);
     }
 
     public static Object fnTest(EvaluationContextInterface context, SList arguments) {

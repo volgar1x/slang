@@ -7,12 +7,12 @@ import slang.visitors.Inspector;
  */
 public final class Num {
     public static void load(EvaluationContextInterface context) {
-        Stdlib.loadFn(context, SAtom.of("+"), Num::plus, true);
-        Stdlib.loadFn(context, SAtom.of("-"), Num::minus, true);
-        Stdlib.loadFn(context, SAtom.of("*"), Num::mul, true);
-        Stdlib.loadFn(context, SAtom.of("/"), Num::div, true);
-        Stdlib.loadFn(context, SAtom.of("%"), Num::rem, true);
-        Stdlib.loadFn(context, SAtom.of("sqrt"), Num::sqrt, true);
+        Stdlib.loadFn(context, SName.of("+"), Num::plus, true);
+        Stdlib.loadFn(context, SName.of("-"), Num::minus, true);
+        Stdlib.loadFn(context, SName.of("*"), Num::mul, true);
+        Stdlib.loadFn(context, SName.of("/"), Num::div, true);
+        Stdlib.loadFn(context, SName.of("%"), Num::rem, true);
+        Stdlib.loadFn(context, SName.of("sqrt"), Num::sqrt, true);
     }
 
     public static Object plus(EvaluationContextInterface context, SList arguments) {

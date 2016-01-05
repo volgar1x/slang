@@ -3,10 +3,10 @@ package slang;
 /**
  * @author Antoine Chauvin
  */
-public class SAtom {
+public final class SName {
     private final String string;
 
-    private SAtom(String string) {
+    private SName(String string) {
         this.string = string;
     }
 
@@ -20,7 +20,7 @@ public class SAtom {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        SAtom atom = (SAtom) o;
+        SName atom = (SName) o;
         return string.equals(atom.string);
     }
 
@@ -29,7 +29,7 @@ public class SAtom {
         return string.hashCode();
     }
 
-    public static SAtom of(String string) {
-        return new SAtom(string);
+    public static SName of(String string) {
+        return new SName(string);
     }
 }

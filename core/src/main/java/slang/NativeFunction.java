@@ -6,18 +6,18 @@ import java.util.function.BiFunction;
  * @author Antoine Chauvin
  */
 public final class NativeFunction implements SFunction {
-    private final SAtom functionName;
+    private final SName functionName;
     private final BiFunction<EvaluationContextInterface, SList, Object> pointer;
     private final boolean evaluateArguments;
 
-    public NativeFunction(SAtom functionName, boolean evaluateArguments, BiFunction<EvaluationContextInterface, SList, Object> pointer) {
+    public NativeFunction(SName functionName, boolean evaluateArguments, BiFunction<EvaluationContextInterface, SList, Object> pointer) {
         this.functionName = functionName;
         this.evaluateArguments = evaluateArguments;
         this.pointer = pointer;
     }
 
     @Override
-    public SAtom getFunctionName() {
+    public SName getFunctionName() {
         return functionName;
     }
 

@@ -42,13 +42,13 @@ public final class MacroExpander extends EvaluationContext implements Visitor<Ob
 
     @Override
     public Object visitList(SList list) {
-        if (list.isEmpty() || !(list.head() instanceof SAtom)) {
+        if (list.isEmpty() || !(list.head() instanceof SName)) {
             return list.map(this);
         }
 
-        SAtom functionName = (SAtom) list.head();
+        SName functionName = (SName) list.head();
 
-        if (functionName.equals(SAtom.of("defmacro"))) {
+        if (functionName.equals(SName.of("defmacro"))) {
             SFn macro = SFn.fromList(list.tail());
             SFunction function = SFn.tailCallOptimized(macro);
             register(function.getFunctionName(), function);

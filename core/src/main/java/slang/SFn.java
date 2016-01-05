@@ -9,17 +9,17 @@ import static slang.visitors.Truth.truthy;
  */
 public final class SFn implements SFunction {
 
-    private final SAtom functionName;
+    private final SName functionName;
     private final SVector argumentNames;
     private final SList operations;
 
-    public SFn(SAtom functionName, SVector argumentNames, SList operations) {
+    public SFn(SName functionName, SVector argumentNames, SList operations) {
         this.functionName = functionName;
         this.argumentNames = argumentNames;
         this.operations = operations;
     }
 
-    public static SFn fromList(SAtom functionName, SList list) {
+    public static SFn fromList(SName functionName, SList list) {
         SVector argumentVector = (SVector) list.head();
         SList operations = list.tail();
 
@@ -27,12 +27,12 @@ public final class SFn implements SFunction {
     }
 
     public static SFn fromList(SList list) {
-        SAtom functionName = (SAtom) list.head();
+        SName functionName = (SName) list.head();
         return fromList(functionName, list.tail());
     }
 
     @Override
-    public SAtom getFunctionName() {
+    public SName getFunctionName() {
         return functionName;
     }
 
@@ -54,9 +54,9 @@ public final class SFn implements SFunction {
     private void registerArguments(EvaluationContextInterface context, SList arguments) {
         SList cur = arguments;
         for (Object arg : argumentNames) {
-            SAtom argumentName = (SAtom) arg;
+            SName argumentName = (SName) arg;
             if (argumentName.toString().equals("&")) {
-                SAtom name = (SAtom) argumentNames.get(argumentNames.size() - 1);
+                SName name = (SName) argumentNames.get(argumentNames.size() - 1);
                 context.register(name, cur);
                 break;
             }
@@ -68,7 +68,7 @@ public final class SFn implements SFunction {
 
     public static SFunction tailCallOptimized(SFn function) {
         Object lastExpression = function.operations.last();
-        if (!isFunctionCallTo(lastExpression, SAtom.of("cond"))) {
+        if (!isFunctionCallTo(lastExpression, SName.of("cond"))) {
             return function;
         }
         SList last = (SList) lastExpression;
@@ -85,7 +85,7 @@ public final class SFn implements SFunction {
         final SList body, recur, result;
 
         if (isFunctionCallTo(first.last(), function.getFunctionName())) {
-            cond = SList.of(SAtom.of("not"), first.head());
+            cond = SList.of(SName.of("not"), first.head());
             body = first.tail().init();
             recur = (SList) first.tail().last();
             result = second.tail();
@@ -115,13 +115,13 @@ public final class SFn implements SFunction {
                 });
     }
 
-    private static boolean isFunctionCallTo(Object expression, SAtom functionName) {
+    private static boolean isFunctionCallTo(Object expression, SName functionName) {
         if (!(expression instanceof SList)) {
             return false;
         }
 
         SList list = (SList) expression;
 
-        return list.head() instanceof SAtom && list.head().equals(functionName);
+        return list.head() instanceof SName && list.head().equals(functionName);
     }
 }

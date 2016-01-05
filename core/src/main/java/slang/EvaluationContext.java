@@ -9,7 +9,7 @@ import java.util.Map;
  * @author Antoine Chauvin
  */
 public abstract class EvaluationContext implements EvaluationContextInterface {
-    private final Map<SAtom, Object> expressions = new HashMap<>();
+    private final Map<SName, Object> expressions = new HashMap<>();
     private final EvaluationContextInterface parent;
     private final ClassLoader classLoader;
     private final InputStream stdin;
@@ -36,7 +36,7 @@ public abstract class EvaluationContext implements EvaluationContextInterface {
     }
 
     @Override
-    public Object read(SAtom identifier) {
+    public Object read(SName identifier) {
         Object result = expressions.get(identifier);
         if (result == null) {
             if (parent == null) {
@@ -48,18 +48,18 @@ public abstract class EvaluationContext implements EvaluationContextInterface {
     }
 
     @Override
-    public boolean present(SAtom identifier) {
+    public boolean present(SName identifier) {
         return expressions.containsKey(identifier) || parent != null && parent.present(identifier);
 
     }
 
     @Override
-    public boolean hasOwn(SAtom identifier) {
+    public boolean hasOwn(SName identifier) {
         return expressions.containsKey(identifier);
     }
 
     @Override
-    public void register(SAtom identifier, Object expression) {
+    public void register(SName identifier, Object expression) {
         expressions.put(identifier, expression);
     }
 

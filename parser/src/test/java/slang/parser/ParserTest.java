@@ -33,14 +33,14 @@ public class ParserTest {
         assertEquals("hello", parser.next());
         assertEquals(123456L, parser.next());
         assertEquals(3.14, parser.next());
-        assertEquals(SAtom.of("pi"), parser.next());
-        assertEquals(SList.of(SAtom.of("hello"), "world"), parser.next());
-        assertEquals(SList.of(SAtom.of("*"), 3.14, SList.of(SAtom.of("+"), 1L, 1L)), parser.next());
-        assertEquals(SList.of(SAtom.of("some"), new SUnquote("macro")), parser.next());
-        assertEquals(new SQuote(SAtom.of("quoted")), parser.next());
-        assertEquals(SHashMap.of(SAtom.of("some"), SAtom.of("map")), parser.next());
-        assertEquals(SSet.of(SAtom.of("some"), SAtom.of("set")), parser.next());
-        assertEquals(SVector.of(SAtom.of("some"), SAtom.of("vector")), parser.next());
+        assertEquals(SName.of("pi"), parser.next());
+        assertEquals(SList.of(SName.of("hello"), "world"), parser.next());
+        assertEquals(SList.of(SName.of("*"), 3.14, SList.of(SName.of("+"), 1L, 1L)), parser.next());
+        assertEquals(SList.of(SName.of("some"), new SUnquote("macro")), parser.next());
+        assertEquals(new SQuote(SName.of("quoted")), parser.next());
+        assertEquals(SHashMap.of(SName.of("some"), SName.of("map")), parser.next());
+        assertEquals(SSet.of(SName.of("some"), SName.of("set")), parser.next());
+        assertEquals(SVector.of(SName.of("some"), SName.of("vector")), parser.next());
         assertEquals(SSet.of(""), parser.next());
         assertEquals(SVector.of(""), parser.next());
     }

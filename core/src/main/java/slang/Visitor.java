@@ -10,6 +10,9 @@ import static slang.Nil.nil;
 public interface Visitor<R> extends Function<Object, R> {
     R otherwise(Object expression);
 
+    default R visitName(SName name) {
+        return otherwise(name);
+    }
     default R visitAtom(SAtom atom) {
         return otherwise(atom);
     }
@@ -40,6 +43,9 @@ public interface Visitor<R> extends Function<Object, R> {
     default R visitList(SList list) {
         return visitMany(list);
     }
+    default R visitMap(SMap map) {
+        return otherwise(map);
+    }
     default R visitSet(SSet set) {
         return visitMany(set);
     }
@@ -58,6 +64,9 @@ public interface Visitor<R> extends Function<Object, R> {
             } else {
                 return visitNil(Nil.NIL);
             }
+        }
+        if (expression instanceof SName) {
+            return visitName((SName) expression);
         }
         if (expression instanceof SAtom) {
             return visitAtom((SAtom) expression);
@@ -85,6 +94,9 @@ public interface Visitor<R> extends Function<Object, R> {
         }
         if (expression instanceof SList) {
             return visitList((SList) expression);
+        }
+        if (expression instanceof SMap) {
+            return visitMap((SMap) expression);
         }
         if (expression instanceof SSet) {
             return visitSet((SSet) expression);

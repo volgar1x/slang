@@ -43,8 +43,8 @@ public class Interpreter extends EvaluationContext implements Visitor<Object> {
     }
 
     @Override
-    public Object visitAtom(SAtom atom) {
-        return read(atom);
+    public Object visitName(SName name) {
+        return read(name);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class Interpreter extends EvaluationContext implements Visitor<Object> {
         if (list.stream().allMatch(x -> x instanceof SList)) {
             return list.map(this);
         }
-        SAtom functionName = (SAtom) list.head();
+        SName functionName = (SName) list.head();
 
         if (isJavaConstructor(functionName)) {
             return doJavaConstructor(functionName, list.tail().map(this));
@@ -93,7 +93,7 @@ public class Interpreter extends EvaluationContext implements Visitor<Object> {
         }
     }
 
-    private boolean isJavaConstructor(SAtom functionName) {
+    private boolean isJavaConstructor(SName functionName) {
         String string = functionName.toString();
 
         if (string.charAt(string.length() - 1) != '.') {
@@ -110,7 +110,7 @@ public class Interpreter extends EvaluationContext implements Visitor<Object> {
         }
     }
 
-    private boolean isJavaInstanceMethodCall(SAtom functionName) {
+    private boolean isJavaInstanceMethodCall(SName functionName) {
         String string = functionName.toString();
 
         if (string.charAt(0) != '.') {
@@ -126,7 +126,7 @@ public class Interpreter extends EvaluationContext implements Visitor<Object> {
         return true;
     }
 
-    private boolean isJavaStaticFunctionCall(SAtom functionName) {
+    private boolean isJavaStaticFunctionCall(SName functionName) {
         String string = functionName.toString();
 
         int sep = string.indexOf('/');
@@ -152,7 +152,7 @@ public class Interpreter extends EvaluationContext implements Visitor<Object> {
         }
     }
 
-    private boolean isJavaStaticFieldCall(SAtom functionName) {
+    private boolean isJavaStaticFieldCall(SName functionName) {
         String string = functionName.toString();
 
         int sep = string.indexOf('#');
@@ -172,7 +172,7 @@ public class Interpreter extends EvaluationContext implements Visitor<Object> {
         }
     }
 
-    private Object doJavaConstructor(SAtom functionName, SList arguments) {
+    private Object doJavaConstructor(SName functionName, SList arguments) {
         String className = functionName.toString();
         className = className.substring(0, className.length() - 1);
 
@@ -191,7 +191,7 @@ public class Interpreter extends EvaluationContext implements Visitor<Object> {
         }
     }
 
-    private Object doJavaInstanceMethodCall(SAtom functionName, SList arguments) {
+    private Object doJavaInstanceMethodCall(SName functionName, SList arguments) {
         String methodName = functionName.toString().substring(1);
 
         Object receiver = arguments.head();
@@ -216,7 +216,7 @@ public class Interpreter extends EvaluationContext implements Visitor<Object> {
         }
     }
 
-    private Object doJavaStaticMethodCall(SAtom functionName, SList arguments) {
+    private Object doJavaStaticMethodCall(SName functionName, SList arguments) {
         String string = functionName.toString();
         int sep = string.indexOf('/');
         String className = string.substring(0, sep);
@@ -238,7 +238,7 @@ public class Interpreter extends EvaluationContext implements Visitor<Object> {
         }
     }
 
-    private Object doJavaStaticFieldCall(SAtom functionName) {
+    private Object doJavaStaticFieldCall(SName functionName) {
         String string = functionName.toString();
         int sep = string.indexOf('#');
         String className = string.substring(0, sep);

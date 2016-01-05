@@ -103,14 +103,18 @@ public final class Parser implements Iterator<Object> {
         }
 
         if (value.charAt(0) == ':') {
-            value = value.substring(1);
+            return SAtom.of(value.substring(1));
         }
 
         if (value.equalsIgnoreCase("nil")) {
             return SList.nil;
         }
 
-        return SAtom.of(value);
+        if (value.equalsIgnoreCase("true")) {
+            return SAtom.of("true");
+        }
+
+        return SName.of(value);
     }
 
     private boolean isInteger(String value) {

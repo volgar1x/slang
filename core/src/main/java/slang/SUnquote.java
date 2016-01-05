@@ -4,10 +4,10 @@ package slang;
  * @author Antoine Chauvin
  */
 public final class SUnquote {
-    public final SAtom name;
+    public final SName name;
 
     public SUnquote(String name) {
-        this.name = SAtom.of(name);
+        this.name = SName.of(name);
     }
 
     @Override
