@@ -195,8 +195,10 @@ public class Interpreter extends EvaluationContext implements Visitor<Object> {
             Object[] parameters = asParameterArray(constructor, arguments);
 
             return constructor.newInstance(parameters);
-        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            throw new SException(e);
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
+            throw new Error(e);
+        } catch (InvocationTargetException e) {
+            throw new SException(e.getCause());
         }
     }
 
@@ -220,8 +222,10 @@ public class Interpreter extends EvaluationContext implements Visitor<Object> {
 
         try {
             return method.invoke(receiver, parameters);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new SException(e);
+        } catch (IllegalAccessException e) {
+            throw new Error(e);
+        } catch (InvocationTargetException e) {
+            throw new SException(e.getCause());
         }
     }
 
@@ -242,8 +246,10 @@ public class Interpreter extends EvaluationContext implements Visitor<Object> {
             Object[] parameters = asParameterArray(method, arguments);
 
             return method.invoke(null, parameters);
-        } catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException e) {
-            throw new SException(e);
+        } catch (ClassNotFoundException | IllegalAccessException e) {
+            throw new Error(e);
+        } catch (InvocationTargetException e) {
+            throw new SException(e.getCause());
         }
     }
 
@@ -311,7 +317,7 @@ public class Interpreter extends EvaluationContext implements Visitor<Object> {
         return new Visitor<Boolean>() {
             @Override
             public Boolean visitAtom(SAtom atom) {
-                if (atom.equals(SAtom.of("true")) && Boolean.class.isAssignableFrom(to)) {
+                if (atom.equals(SAtom.of("true")) && (Boolean.class.isAssignableFrom(to) || boolean.class.isAssignableFrom(to))) {
                     return true;
                 }
                 return otherwise(atom);
@@ -353,7 +359,19 @@ public class Interpreter extends EvaluationContext implements Visitor<Object> {
 
             @Override
             public Boolean visitNil(Nil nil) {
-                // can always coerce nil to null
+                // can coerce nil to a boolean
+                if (boolean.class.isAssignableFrom(to) || Boolean.class.isAssignableFrom(to)) {
+                    return true;
+                }
+
+                // cannot coerce nil to a value type
+                if (char.class.isAssignableFrom(to) || byte.class.isAssignableFrom(to)
+                        || short.class.isAssignableFrom(to) || int.class.isAssignableFrom(to)
+                        || long.class.isAssignableFrom(to) || float.class.isAssignableFrom(to)
+                        || double.class.isAssignableFrom(to)) {
+                    return false;
+                }
+                // can coerce nil to reference type
                 return true;
             }
 
@@ -368,7 +386,7 @@ public class Interpreter extends EvaluationContext implements Visitor<Object> {
         return new Visitor<Object>() {
             @Override
             public Object visitAtom(SAtom atom) {
-                if (atom.equals(SAtom.of("true")) && Boolean.class.isAssignableFrom(to)) {
+                if (atom.equals(SAtom.of("true")) && (Boolean.class.isAssignableFrom(to) || boolean.class.isAssignableFrom(to))) {
                     return true;
                 }
                 return otherwise(atom);
@@ -404,6 +422,9 @@ public class Interpreter extends EvaluationContext implements Visitor<Object> {
 
             @Override
             public Object visitNil(Nil nil) {
+                if (Boolean.class.isAssignableFrom(to) || boolean.class.isAssignableFrom(to)) {
+                    return Boolean.FALSE;
+                }
                 if (Iterable.class.isAssignableFrom(to)) {
                     return nil;
                 }
