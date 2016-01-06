@@ -28,3 +28,26 @@
 
 (let [foo "bar" buzz 42]
   (print-vars foo buzz))
+
+(defmacro thread-form [receiver form]
+  (cons (car form)
+    (cons receiver (cdr form))))
+
+(defmacro thread-forms-rec [xs acc]
+  (cond
+    ((nil? xs) acc)
+    (:else
+      (thread-forms-rec (cdr xs)
+        (thread-form acc (car xs))))))
+
+(defmacro -> [x & forms]
+  (thread-forms-rec forms x))
+
+(assert = '("4" "8")
+  (-> '(1 2 3 4)
+    (.stream)
+    (.filter (fn [x] (= 0 (% x 2))))
+    (.map (fn [x] (* x 2)))
+    (.map (fn [x] (.toString x)))
+    (.collect (slang.stream.Collectors/list))))
+
