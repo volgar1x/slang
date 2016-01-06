@@ -11,8 +11,8 @@ public final class MacroExpander extends EvaluationContext implements Visitor<Ob
     }
 
     @Override
-    public EvaluationContextInterface link() {
-        return new MacroExpander(this);
+    public EvaluationContextInterface linkTo(EvaluationContextInterface parent) {
+        return new MacroExpander(parent);
     }
 
     @Override
@@ -49,7 +49,7 @@ public final class MacroExpander extends EvaluationContext implements Visitor<Ob
         SName functionName = (SName) list.head();
 
         if (functionName.equals(SName.of("defmacro"))) {
-            SFn macro = SFn.fromList(list.tail());
+            SFn macro = SFn.fromList(list.tail(), this);
             SFunction function = SFn.tailCallOptimized(macro);
             register(function.getFunctionName(), function);
             return SList.nil;
@@ -97,8 +97,8 @@ public final class MacroExpander extends EvaluationContext implements Visitor<Ob
         }
 
         @Override
-        public EvaluationContextInterface link() {
-            return new UnquotingInterpreter(this, expander);
+        public EvaluationContextInterface linkTo(EvaluationContextInterface parent) {
+            return new UnquotingInterpreter(parent, expander);
         }
 
         @Override

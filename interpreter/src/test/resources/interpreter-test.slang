@@ -55,3 +55,9 @@
   (let [new-map (.with map "b" 2)]
     (assert = 2 (.get new-map "b"))
     (assert = nil (.get map "b"))))
+
+(def return-two []
+  (let [x 2]
+    (fn [] x)))
+
+(assert = 4 (call-lambda-function (return-two)))

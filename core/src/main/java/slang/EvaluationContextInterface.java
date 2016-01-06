@@ -8,6 +8,7 @@ import java.util.function.UnaryOperator;
  * @author Antoine Chauvin
  */
 public interface EvaluationContextInterface extends UnaryOperator<Object> {
+    EvaluationContextInterface linkTo(EvaluationContextInterface parent);
     EvaluationContextInterface link();
     Object evaluate(Object expression);
 

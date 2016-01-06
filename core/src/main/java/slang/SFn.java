@@ -13,23 +13,25 @@ public final class SFn implements SFunction {
     private final SName functionName;
     private final SVector argumentNames;
     private final SList operations;
+    private final EvaluationContextInterface context;
 
-    public SFn(SName functionName, SVector argumentNames, SList operations) {
+    private SFn(SName functionName, SVector argumentNames, SList operations, EvaluationContextInterface context) {
         this.functionName = functionName;
         this.argumentNames = argumentNames;
         this.operations = operations;
+        this.context = context;
     }
 
-    public static SFn fromList(SName functionName, SList list) {
+    public static SFn fromList(SName functionName, SList list, EvaluationContextInterface context) {
         SVector argumentVector = (SVector) list.head();
         SList operations = list.tail();
 
-        return new SFn(functionName, argumentVector, operations);
+        return new SFn(functionName, argumentVector, operations, context);
     }
 
-    public static SFn fromList(SList list) {
+    public static SFn fromList(SList list, EvaluationContextInterface context) {
         SName functionName = (SName) list.head();
-        return fromList(functionName, list.tail());
+        return fromList(functionName, list.tail(), context);
     }
 
     @Override
@@ -44,12 +46,13 @@ public final class SFn implements SFunction {
 
     @Override
     public Object call(EvaluationContextInterface context, SList arguments) {
-        registerArguments(context, arguments);
-        return operations.execute(context);
+        EvaluationContextInterface ctx = context.linkTo(this.context);
+        registerArguments(ctx, arguments);
+        return operations.execute(ctx);
     }
 
     public SFn map(Function<SList, SList> function) {
-        return new SFn(functionName, argumentNames, function.apply(operations));
+        return new SFn(functionName, argumentNames, function.apply(operations), context);
     }
 
     private void registerArguments(EvaluationContextInterface context, SList arguments) {

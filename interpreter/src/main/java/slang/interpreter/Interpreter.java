@@ -23,8 +23,8 @@ public class Interpreter extends EvaluationContext implements Visitor<Object> {
     }
 
     @Override
-    public EvaluationContextInterface link() {
-        return new Interpreter(this);
+    public EvaluationContextInterface linkTo(EvaluationContextInterface parent) {
+        return new Interpreter(parent);
     }
 
     @Override

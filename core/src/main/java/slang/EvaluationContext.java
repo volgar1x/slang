@@ -31,8 +31,9 @@ public abstract class EvaluationContext implements EvaluationContextInterface {
         this.stderr = null;
     }
 
-    protected EvaluationContextInterface getParent() {
-        return parent;
+    @Override
+    public EvaluationContextInterface link() {
+        return linkTo(this);
     }
 
     @Override

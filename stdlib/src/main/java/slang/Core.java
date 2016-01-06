@@ -34,7 +34,7 @@ public final class Core {
     }
 
     public static Object def(EvaluationContextInterface context, SList arguments) {
-        SFn function = SFn.fromList(arguments);
+        SFn function = SFn.fromList(arguments, context);
         SFunction fn = SFn.tailCallOptimized(function);
         context.register(fn.getFunctionName(), fn);
         return new SQuote(fn.getFunctionName());
@@ -57,7 +57,7 @@ public final class Core {
     }
 
     public static Object fn(EvaluationContextInterface context, SList arguments) {
-        return SFn.fromList(SName.of("%"), arguments);
+        return SFn.fromList(SName.of("%"), arguments, context);
     }
 
     public static Object do_(EvaluationContextInterface context, SList arguments) {
