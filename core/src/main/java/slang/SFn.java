@@ -1,8 +1,9 @@
 package slang;
 
-import java.util.function.Function;
+import slang.visitors.Truth;
 
-import static slang.visitors.Truth.truthy;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * @author Antoine Chauvin
@@ -81,16 +82,16 @@ public final class SFn implements SFunction {
         SList first = (SList) last.tail().head();
         SList second = (SList) last.tail().tail().head();
 
-        final Object cond;
+        final Predicate<EvaluationContextInterface> cond;
         final SList body, recur, result;
 
         if (isFunctionCallTo(first.last(), function.getFunctionName())) {
-            cond = SList.of(SName.of("not"), first.head());
+            cond = context -> Truth.truthy(context.evaluate(first.head()));
             body = first.tail().init();
             recur = (SList) first.tail().last();
             result = second.tail();
         } else if (isFunctionCallTo(second.last(), function.getFunctionName())) {
-            cond = first.head();
+            cond = context -> !Truth.truthy(context.evaluate(first.head()));
             body = second.tail().init();
             recur = (SList) second.tail().last();
             result = first.tail();
@@ -103,7 +104,7 @@ public final class SFn implements SFunction {
                     EvaluationContextInterface current = context.link();
                     function.registerArguments(current, arguments);
 
-                    while (!truthy(current.evaluate(cond))) {
+                    while (cond.test(current)) {
                         current.evaluate(body);
 
                         EvaluationContextInterface newCurrent = context.link();
