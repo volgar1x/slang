@@ -72,7 +72,7 @@ public interface SList extends List<Object>, SMany {
         return tail;
     }
 
-    static SMany.Builder builder() {
+    static Builder builder() {
         return new Builder();
     }
 
@@ -83,6 +83,12 @@ public interface SList extends List<Object>, SMany {
         @Override
         public void add(Object element) {
             cur = cur.push(element);
+        }
+
+        public void addAll(Builder builder) {
+            for (Object o : builder.cur) {
+                cur = cur.push(o);
+            }
         }
 
         @Override

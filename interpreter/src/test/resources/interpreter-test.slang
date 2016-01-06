@@ -61,3 +61,9 @@
     (fn [] x)))
 
 (assert = 4 (call-lambda-function (return-two)))
+
+(let [xs '(1 2 3 4)]
+  (let [xxs (.collect (.filter (.stream xs)
+                               (fn [x] (= 0 (% x 2))))
+                      (slang.stream.Collectors/list))]
+      (assert = '(2 4) xxs)))

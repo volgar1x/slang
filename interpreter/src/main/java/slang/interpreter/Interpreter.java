@@ -8,6 +8,7 @@ import java.lang.reflect.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Antoine Chauvin
@@ -221,6 +222,7 @@ public class Interpreter extends EvaluationContext implements Visitor<Object> {
         Object[] parameters = asParameterArray(method, arguments.tail());
 
         try {
+            method.setAccessible(true);
             return method.invoke(receiver, parameters);
         } catch (IllegalAccessException e) {
             throw new Error(e);
@@ -376,6 +378,14 @@ public class Interpreter extends EvaluationContext implements Visitor<Object> {
             }
 
             @Override
+            public Boolean visitFunction(SFunction function) {
+                return to.isInterface() &&
+                        Stream.of(to.getDeclaredMethods())
+                                .filter(x -> Modifier.isAbstract(x.getModifiers()))
+                                .count() == 1L;
+            }
+
+            @Override
             public Boolean otherwise(Object expression) {
                 return to.isInstance(expression);
             }
@@ -429,6 +439,15 @@ public class Interpreter extends EvaluationContext implements Visitor<Object> {
                     return nil;
                 }
                 return null;
+            }
+
+            @Override
+            public Object visitFunction(SFunction function) {
+                return Proxy.newProxyInstance(getClassLoader(), new Class<?>[]{to},
+                        (proxy, method, args) -> {
+                            Object result = function.call(Interpreter.this, SList.of(args));
+                            return coerce(result, method.getReturnType());
+                        });
             }
 
             @Override
