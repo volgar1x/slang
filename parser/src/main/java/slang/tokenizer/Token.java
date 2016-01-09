@@ -1,50 +1,30 @@
 package slang.tokenizer;
 
-import java.util.Objects;
-
 /**
  * @author Antoine Chauvin
  */
-public final class Token implements TokenInterface {
-    private final String value;
+public abstract class Token {
+    private final int line, column;
 
-    private Token(String value) {
-        this.value = Objects.requireNonNull(value, "token value must not be null");
+    protected Token(int line, int column) {
+        this.line = line;
+        this.column = column;
     }
 
-    public static Token of(String value) {
-        return new Token(value);
+    public int getLine() {
+        return line;
     }
 
-    @Override
-    public String getValue() {
-        return value;
+    public int getColumn() {
+        return column;
     }
 
-    @Override
-    public void expect(TokenInterface token) {
-        if (!token.getValue().equals(this.value)) {
-            throw new RuntimeException("unexpected token `" + value + '"');
+    public abstract String getValue();
+    public abstract boolean test(Object value);
+
+    public void expect(Object value) {
+        if (!test(value)) {
+            throw new IllegalArgumentException("unexpected token `" + value + "'");
         }
-    }
-
-    @Override
-    public String toString() {
-        return value;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Token token = (Token) o;
-
-        return value.equals(token.value);
-    }
-
-    @Override
-    public int hashCode() {
-        return value.hashCode();
     }
 }

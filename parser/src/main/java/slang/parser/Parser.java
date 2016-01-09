@@ -2,8 +2,8 @@ package slang.parser;
 
 import slang.*;
 import slang.tokenizer.ConstToken;
+import slang.tokenizer.ValueToken;
 import slang.tokenizer.Token;
-import slang.tokenizer.TokenInterface;
 
 import java.util.Iterator;
 
@@ -12,9 +12,9 @@ import java.util.Iterator;
  * @author Antoine Chauvin
  */
 public final class Parser implements Iterator<Object> {
-    private final Iterator<TokenInterface> tokenizer;
+    private final Iterator<Token> tokenizer;
 
-    public Parser(Iterator<TokenInterface> tokenizer) {
+    public Parser(Iterator<Token> tokenizer) {
         this.tokenizer = tokenizer;
     }
 
@@ -28,21 +28,21 @@ public final class Parser implements Iterator<Object> {
         return next(tokenizer.next());
     }
 
-    private Object next(TokenInterface token) {
+    private Object next(Token token) {
         if (token instanceof ConstToken) {
-            switch ((ConstToken) token) {
+            switch (((ConstToken) token).getType()) {
                 case START_LIST:
-                    return nextMany(SList.builder(), ConstToken.END_LIST);
+                    return nextMany(SList.builder(), ConstToken.Type.END_LIST);
                 case START_MAP:
-                    return nextMap(SHashMap.builder(), ConstToken.END_MAP);
+                    return nextMap(SHashMap.builder(), ConstToken.Type.END_MAP);
                 case START_SET:
-                    return nextMany(SSet.builder(), ConstToken.END_SET);
+                    return nextMany(SSet.builder(), ConstToken.Type.END_SET);
                 case START_VECTOR:
-                    return nextMany(SVector.builder(), ConstToken.END_VECTOR);
+                    return nextMany(SVector.builder(), ConstToken.Type.END_VECTOR);
 
                 case DOUBLE_QUOTE:
                     String string = nextTokenValue();
-                    tokenizer.next().expect(ConstToken.DOUBLE_QUOTE);
+                    tokenizer.next().expect(ConstToken.Type.DOUBLE_QUOTE);
                     return string;
 
                 case QUOTE:
@@ -60,17 +60,17 @@ public final class Parser implements Iterator<Object> {
     }
 
     private String nextTokenValue() {
-        TokenInterface token = tokenizer.next();
-        if (token instanceof Token) {
+        Token token = tokenizer.next();
+        if (token instanceof ValueToken) {
             return token.getValue();
         }
         throw new RuntimeException("unexpected token `" + token + "'");
     }
 
-    private SMany nextMany(SMany.Builder builder, ConstToken delim) {
+    private SMany nextMany(SMany.Builder builder, ConstToken.Type delim) {
         while (true) {
-            TokenInterface token = tokenizer.next();
-            if (token.equals(delim)) {
+            Token token = tokenizer.next();
+            if (token.test(delim)) {
                 break;
             }
             Object expression = next(token);
@@ -79,11 +79,11 @@ public final class Parser implements Iterator<Object> {
         return builder.build();
     }
 
-    private SMap nextMap(SMap.Builder builder, ConstToken delim) {
-        TokenInterface token;
+    private SMap nextMap(SMap.Builder builder, ConstToken.Type delim) {
+        Token token;
         while (true) {
             token = tokenizer.next();
-            if (token.equals(delim)) {
+            if (token.test(delim)) {
                 break;
             }
             Object key = next(token);

@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import java.io.InputStream;
 
-import static org.junit.Assert.*;
+import static slang.tokenizer.ConstToken.Type.*;
 
 /**
  * @author Antoine Chauvin
@@ -28,69 +28,69 @@ public class TokenizerTest {
 
     @Test
     public void test() throws Exception {
-        assertEquals(ConstToken.DOUBLE_QUOTE, tokenizer.next());
-        assertEquals(Token.of("hello"), tokenizer.next());
-        assertEquals(ConstToken.DOUBLE_QUOTE, tokenizer.next());
+        tokenizer.next().expect(DOUBLE_QUOTE);
+        tokenizer.next().expect("hello");
+        tokenizer.next().expect(DOUBLE_QUOTE);
 
-        assertEquals(Token.of("123456"), tokenizer.next());
+        tokenizer.next().expect("123456");
 
-        assertEquals(Token.of("3.14"), tokenizer.next());
+        tokenizer.next().expect("3.14");
 
-        assertEquals(Token.of("pi"), tokenizer.next());
+        tokenizer.next().expect("pi");
 
-        assertEquals(ConstToken.START_LIST, tokenizer.next());
-        assertEquals(Token.of("hello"), tokenizer.next());
-        assertEquals(ConstToken.DOUBLE_QUOTE, tokenizer.next());
-        assertEquals(Token.of("world"), tokenizer.next());
-        assertEquals(ConstToken.DOUBLE_QUOTE, tokenizer.next());
-        assertEquals(ConstToken.END_LIST, tokenizer.next());
+        tokenizer.next().expect(START_LIST);
+        tokenizer.next().expect("hello");
+        tokenizer.next().expect(DOUBLE_QUOTE);
+        tokenizer.next().expect("world");
+        tokenizer.next().expect(DOUBLE_QUOTE);
+        tokenizer.next().expect(END_LIST);
 
-        assertEquals(ConstToken.START_LIST, tokenizer.next());
-        assertEquals(Token.of("*"), tokenizer.next());
-        assertEquals(Token.of("3.14"), tokenizer.next());
-        assertEquals(ConstToken.START_LIST, tokenizer.next());
-        assertEquals(Token.of("+"), tokenizer.next());
-        assertEquals(Token.of("1"), tokenizer.next());
-        assertEquals(Token.of("1"), tokenizer.next());
-        assertEquals(ConstToken.END_LIST, tokenizer.next());
-        assertEquals(ConstToken.END_LIST, tokenizer.next());
+        tokenizer.next().expect(START_LIST);
+        tokenizer.next().expect("*");
+        tokenizer.next().expect("3.14");
+        tokenizer.next().expect(START_LIST);
+        tokenizer.next().expect("+");
+        tokenizer.next().expect("1");
+        tokenizer.next().expect("1");
+        tokenizer.next().expect(END_LIST);
+        tokenizer.next().expect(END_LIST);
 
-        assertEquals(ConstToken.START_LIST, tokenizer.next());
-        assertEquals(Token.of("some"), tokenizer.next());
-        assertEquals(ConstToken.UNQUOTE, tokenizer.next());
-        assertEquals(Token.of("macro"), tokenizer.next());
-        assertEquals(ConstToken.END_LIST, tokenizer.next());
+        tokenizer.next().expect(START_LIST);
+        tokenizer.next().expect("some");
+        tokenizer.next().expect(UNQUOTE);
+        tokenizer.next().expect("macro");
+        tokenizer.next().expect(END_LIST);
 
-        assertEquals(ConstToken.QUOTE, tokenizer.next());
-        assertEquals(Token.of("quoted"), tokenizer.next());
+        tokenizer.next().expect(QUOTE);
+        tokenizer.next().expect("quoted");
 
-        assertEquals(ConstToken.START_MAP, tokenizer.next());
-        assertEquals(Token.of("some"), tokenizer.next());
-        assertEquals(Token.of("map"), tokenizer.next());
-        assertEquals(ConstToken.END_MAP, tokenizer.next());
+        tokenizer.next().expect(START_MAP);
+        tokenizer.next().expect("some");
+        tokenizer.next().expect("map");
+        tokenizer.next().expect(END_MAP);
 
-        assertEquals(ConstToken.START_SET, tokenizer.next());
-        assertEquals(Token.of("some"), tokenizer.next());
-        assertEquals(Token.of("set"), tokenizer.next());
-        assertEquals(ConstToken.END_SET, tokenizer.next());
+        tokenizer.next().expect(START_SET);
+        tokenizer.next().expect("some");
+        tokenizer.next().expect("set");
+        tokenizer.next().expect(END_SET);
 
-        assertEquals(ConstToken.START_VECTOR, tokenizer.next());
-        assertEquals(Token.of("some"), tokenizer.next());
-        assertEquals(Token.of("vector"), tokenizer.next());
-        assertEquals(ConstToken.END_VECTOR, tokenizer.next());
+        tokenizer.next().expect(START_VECTOR);
+        tokenizer.next().expect("some");
+        tokenizer.next().expect("vector");
+        tokenizer.next().expect(END_VECTOR);
 
-        assertEquals(ConstToken.START_SET, tokenizer.next());
-        assertEquals(ConstToken.DOUBLE_QUOTE, tokenizer.next());
-        assertEquals(Token.of(""), tokenizer.next());
-        assertEquals(ConstToken.DOUBLE_QUOTE, tokenizer.next());
-        assertEquals(ConstToken.END_SET, tokenizer.next());
+        tokenizer.next().expect(START_SET);
+        tokenizer.next().expect(DOUBLE_QUOTE);
+        tokenizer.next().expect("");
+        tokenizer.next().expect(DOUBLE_QUOTE);
+        tokenizer.next().expect(END_SET);
 
-        assertEquals(ConstToken.START_VECTOR, tokenizer.next());
-        assertEquals(ConstToken.DOUBLE_QUOTE, tokenizer.next());
-        assertEquals(Token.of(""), tokenizer.next());
-        assertEquals(ConstToken.DOUBLE_QUOTE, tokenizer.next());
-        assertEquals(ConstToken.END_VECTOR, tokenizer.next());
+        tokenizer.next().expect(START_VECTOR);
+        tokenizer.next().expect(DOUBLE_QUOTE);
+        tokenizer.next().expect("");
+        tokenizer.next().expect(DOUBLE_QUOTE);
+        tokenizer.next().expect(END_VECTOR);
 
-        assertEquals(ConstToken.EOF, tokenizer.next());
+        tokenizer.next().expect(EOF);
     }
 }
