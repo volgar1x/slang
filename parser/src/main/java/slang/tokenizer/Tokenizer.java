@@ -5,75 +5,69 @@ import java.io.InputStream;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Objects;
+
+import static slang.tokenizer.ConstToken.Type.*;
 
 /**
  * @author Antoine Chauvin
  */
 public final class Tokenizer implements Iterator<Token> {
     private final InputStream stream;
-
+    private final Deque<Token> pending;
+    private int line, col;
     private boolean string, set;
-    private final Deque<Token> queued;
-    private int curLine, curColumn;
 
     public Tokenizer(InputStream stream) {
-        this.stream = stream;
-        this.string = false;
-        this.set = false;
-        this.queued = new LinkedList<>();
-        this.curLine = this.curColumn = 0;
+        this.stream = Objects.requireNonNull(stream, "stream");
+        this.pending = new LinkedList<>();
+        this.line = this.col = 1;
     }
 
-    private void incLine() {
-        this.curLine++;
-        this.curColumn = 0;
+    private boolean isWhitespace(int chr) {
+        return Character.isWhitespace(chr);
     }
 
-    private void incColumn() {
-        this.curColumn++;
+    private boolean isEndOfLine(int chr) {
+        return chr == '\n';
     }
 
-    private int incPos(int chr) {
-        if (chr == '\n') {
-            incLine();
+    private boolean isConstTokenType(int chr) {
+        switch (chr) {
+            case '(':
+            case ')':
+            case '[':
+            case ']':
+            case '{':
+            case '}':
+            case '#':
+            case '"':
+            case '\'':
+            case ';':
+                return true;
+
+            default:
+                return false;
+        }
+    }
+
+    private boolean isValidIdentifierPart(int chr) {
+        return !isWhitespace(chr) && !isConstTokenType(chr);
+    }
+
+    private int read() throws IOException {
+        int chr = stream.read();
+        if (isEndOfLine(chr)) {
+            line += 1;
+            col = 1;
         } else {
-            incColumn();
+            col += 1;
         }
         return chr;
     }
 
-    @Override
-    public boolean hasNext() {
-        try {
-            return stream.available() > 0;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public Token next() {
-        try {
-            return safeNext();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private ConstToken newConst(ConstToken.Type type) {
-        return new ConstToken(curLine, curColumn, type);
-    }
-
-    private ValueToken newValue(String value) {
-        return new ValueToken(curLine, curColumn, value);
-    }
-
-    private int read() throws IOException {
-        return incPos(stream.read());
-    }
-
     private int skipWhitespaces(int chr) throws IOException {
-        while (Character.isWhitespace(chr)) {
+        while (isWhitespace(chr)) {
             chr = read();
         }
         return chr;
@@ -82,102 +76,134 @@ public final class Tokenizer implements Iterator<Token> {
     private int skipLine() throws IOException {
         while (true) {
             int chr = read();
-            if (chr == '\n' || chr == -1) {
+            if (isEndOfLine(chr)) {
                 break;
             }
         }
         return read();
     }
 
-    private Token safeNext() throws IOException {
-        if (!queued.isEmpty()) {
-            return queued.removeFirst();
+    @Override
+    public boolean hasNext() {
+        try {
+            return !pending.isEmpty() || stream.available() > 0;
+        } catch (IOException e) {
+            return false;
         }
+    }
 
-        if (string) {
-            int chr = read();
-            StringBuilder buf = new StringBuilder();
-            while (chr != -1 && chr != '"') {
-                buf.append((char) chr);
-                chr = read();
-            }
+    @Override
+    public Token next() {
+        try {
+            return nextToken();
+        } catch (IOException e) {
+            return new ConstToken(0, 0, EOF);
+        }
+    }
+
+    private Token nextToken() throws IOException {
+        if (!pending.isEmpty()) {
+            return pending.removeFirst();
+        } else if (string) {
             string = false;
-            if (chr == -1) {
-                queued.addFirst(newConst(ConstToken.Type.EOF));
-            } else {
-                queued.addFirst(newConst(ConstToken.Type.DOUBLE_QUOTE));
-            }
-            return newValue(buf.toString());
+            return nextString(line, col);
+        } else {
+            return nextToken(read());
         }
+    }
 
-        int chr = skipWhitespaces(read());
+    private Token nextToken(int chr) throws IOException {
+        chr = skipWhitespaces(chr);
+        return nextToken(chr, line, col - 1);
+    }
 
-        while (chr == ';') {
-            chr = skipWhitespaces(skipLine());
-        }
-
+    private Token nextToken(int chr, int l, int c) throws IOException {
         switch (chr) {
-            case -1:   return newConst(ConstToken.Type.EOF);
-            case '(':  return newConst(ConstToken.Type.START_LIST);
-            case ')':  return newConst(ConstToken.Type.END_LIST);
-            case '{':  return newConst(ConstToken.Type.START_MAP);
-            case '}':
+            case -1:
+                return new ConstToken(l, c, EOF);
+
+            case ';'://comment
+                return nextToken(skipLine());
+
+            case '"'://string
+                string = true;
+                return new ConstToken(l, c, DOUBLE_QUOTE);
+
+            case '('://list
+                return new ConstToken(l, c, START_LIST);
+            case ')'://list
+                return new ConstToken(l, c, END_LIST);
+
+            case '['://vector
+                return new ConstToken(l, c, START_VECTOR);
+            case ']'://vector
+                return new ConstToken(l, c, END_VECTOR);
+
+            case '{'://map
+                return new ConstToken(l, c, START_MAP);
+            case '}'://map
                 if (set) {
                     set = false;
-                    return newConst(ConstToken.Type.END_SET);
+                    return new ConstToken(l, c, END_SET);
                 }
-                return newConst(ConstToken.Type.END_MAP);
-            case '[':  return newConst(ConstToken.Type.START_VECTOR);
-            case ']':  return newConst(ConstToken.Type.END_VECTOR);
-            case '\'': return newConst(ConstToken.Type.QUOTE);
-            case '#':
-                Token nextToken = safeNext();
-                if (nextToken.test(ConstToken.Type.START_MAP)) {
-                    set = true;
-                    return newConst(ConstToken.Type.START_SET);
-                }
-                queued.addFirst(nextToken);
-                return newConst(ConstToken.Type.UNQUOTE);
+                return new ConstToken(l, c, END_MAP);
 
-            case '"':
-                string = true;
-                return newConst(ConstToken.Type.DOUBLE_QUOTE);
+            case '\''://quote
+                return new ConstToken(l, c, QUOTE);
+
+            case '#'://unquote | set
+                Token tok = nextToken();
+                if (tok.test(START_MAP)) {
+                    set = true;
+                    return new ConstToken(l, c, START_SET);
+                } else {
+                    pending.addFirst(tok);
+                    return new ConstToken(l, c, UNQUOTE);
+                }
         }
 
-        StringBuilder buf = new StringBuilder();
-        while (!Character.isWhitespace(chr) && !isEndingToken(chr)) {
-            buf.append((char) chr);
+        return nextValue(chr, l, c);
+    }
+
+    private Token nextString(int l, int c) throws IOException {
+        boolean escape = false;
+
+        StringBuilder builder = new StringBuilder();
+
+        int chr;
+        while (true) {
+            chr = read();
+
+            if (escape) {
+                escape = false;
+            } else if (chr == '\\') {
+                escape = true;
+            } else if (chr == '"' || chr == -1) {
+                break;
+            }
+
+            builder.appendCodePoint(chr);
+        }
+
+        pending.addFirst(new ConstToken(l, c + builder.length(),
+                chr == -1 ? EOF : DOUBLE_QUOTE));
+
+        return new ValueToken(l, c, builder.toString());
+    }
+
+    private Token nextValue(int chr, int l, int c) throws IOException {
+        StringBuilder builder = new StringBuilder();
+
+        while (isValidIdentifierPart(chr)) {
+            builder.appendCodePoint(chr);
+
             chr = read();
         }
-        if (isEndingToken(chr)) {
-            queued.addFirst(asEndingToken(chr));
+
+        if (isConstTokenType(chr)) {
+            pending.addFirst(nextToken(chr, l, c + builder.length()));
         }
 
-        return newValue(buf.toString());
-    }
-
-    private Token asEndingToken(int chr) {
-        switch (chr) {
-            case -1:  return newConst(ConstToken.Type.EOF);
-            case ')': return newConst(ConstToken.Type.END_LIST);
-            case '}':
-                if (set) {
-                    set = false;
-                    return newConst(ConstToken.Type.END_SET);
-                }
-                return newConst(ConstToken.Type.END_MAP);
-            case ']': return newConst(ConstToken.Type.END_VECTOR);
-            default:  return null;
-        }
-    }
-
-    private boolean isEndingToken(int chr) {
-        switch (chr) {
-            case ')':
-            case '}':
-            case ']':
-                return true;
-        }
-        return false;
+        return new ValueToken(l, c, builder.toString());
     }
 }
