@@ -2,8 +2,6 @@ package slang.interpreter;
 
 import slang.*;
 
-import java.io.InputStream;
-import java.io.PrintStream;
 import java.lang.reflect.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -14,8 +12,8 @@ import java.util.stream.Stream;
  * @author Antoine Chauvin
  */
 public class Interpreter extends EvaluationContext implements Visitor<Object> {
-    public Interpreter(ClassLoader classLoader, InputStream stdin, PrintStream stdout, PrintStream stderr) {
-        super(classLoader, stdin, stdout, stderr);
+    public Interpreter(ClassLoader classLoader) {
+        super(classLoader);
         Stdlib.load(this);
     }
 

@@ -1,7 +1,5 @@
 package slang;
 
-import java.io.InputStream;
-import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,23 +10,15 @@ public abstract class EvaluationContext implements EvaluationContextInterface {
     private final Map<SName, Object> expressions = new HashMap<>();
     private final EvaluationContextInterface parent;
     private final ClassLoader classLoader;
-    private final InputStream stdin;
-    private final PrintStream stdout, stderr;
 
-    public EvaluationContext(ClassLoader classLoader, InputStream stdin, PrintStream stdout, PrintStream stderr) {
+    public EvaluationContext(ClassLoader classLoader) {
         this.classLoader = classLoader;
         this.parent = null;
-        this.stdin = stdin;
-        this.stdout = stdout;
-        this.stderr = stderr;
     }
 
     public EvaluationContext(EvaluationContextInterface parent) {
         this.parent = parent;
         this.classLoader = null;
-        this.stdin = null;
-        this.stdout = null;
-        this.stderr = null;
     }
 
     @Override
@@ -67,20 +57,5 @@ public abstract class EvaluationContext implements EvaluationContextInterface {
     @Override
     public ClassLoader getClassLoader() {
         return parent != null ? parent.getClassLoader() : classLoader;
-    }
-
-    @Override
-    public InputStream getStandardInput() {
-        return parent != null ? parent.getStandardInput() : stdin;
-    }
-
-    @Override
-    public PrintStream getStandardOutput() {
-        return parent != null ? parent.getStandardOutput() : stdout;
-    }
-
-    @Override
-    public PrintStream getStandardError() {
-        return parent != null ? parent.getStandardError() : stderr;
     }
 }

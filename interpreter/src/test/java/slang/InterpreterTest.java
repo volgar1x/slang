@@ -27,9 +27,13 @@ public class InterpreterTest {
         stdout = new MockOutputStream();
         stderr = new MockOutputStream();
 
+        System.setIn(stdin);
+        System.setOut(new PrintStream(stdout));
+        System.setErr(new PrintStream(stderr));
+
         parser = new Parser(new Tokenizer(getClass().getClassLoader().getResourceAsStream("interpreter-test.slang")));
 
-        interpreter = new Interpreter(getClass().getClassLoader(), stdin, new PrintStream(stdout), new PrintStream(stderr));
+        interpreter = new Interpreter(getClass().getClassLoader());
         SlangAssert.load(interpreter);
     }
 

@@ -1,7 +1,5 @@
 package slang;
 
-import java.io.InputStream;
-import java.io.PrintStream;
 import java.util.function.UnaryOperator;
 
 /**
@@ -18,9 +16,6 @@ public interface EvaluationContextInterface extends UnaryOperator<Object> {
     void register(SName identifier, Object expression);
 
     ClassLoader getClassLoader();
-    InputStream getStandardInput();
-    PrintStream getStandardOutput();
-    PrintStream getStandardError();
 
     @Override
     default Object apply(Object expression) {

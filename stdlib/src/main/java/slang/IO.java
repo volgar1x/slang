@@ -17,18 +17,18 @@ public final class IO {
     }
 
     public static Object println(EvaluationContextInterface context, SList arguments) {
-        context.getStandardOutput().println(Printer.print(arguments));
+        System.out.println(Printer.print(arguments));
         return SList.nil;
     }
 
     public static Object print(EvaluationContextInterface context, SList arguments) {
-        context.getStandardOutput().print(Printer.print(arguments));
+        System.out.print(Printer.print(arguments));
         return SList.nil;
     }
 
     public static Object readln(EvaluationContextInterface context, SList arguments) {
         print(context, arguments);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(context.getStandardInput()));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         try {
             return reader.readLine();
         } catch (IOException e) {

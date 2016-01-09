@@ -25,7 +25,7 @@ public final class App {
             repl = REPL.fromFile(Paths.get(filename), args.contains("-v"));
         } else {
             // read code from stdin and provide some niceties over it
-            repl = REPL.mount(new Interpreter(App.class.getClassLoader(), System.in, System.out, System.err));
+            repl = REPL.mount(new Interpreter(App.class.getClassLoader()));
         }
 
         SlangAssert.load(repl.getInterpreter());

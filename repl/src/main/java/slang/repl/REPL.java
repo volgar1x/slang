@@ -37,7 +37,7 @@ public final class REPL {
     }
 
     public static REPL mount(Interpreter interpreter) {
-        InputStream stdin = new Pretty(interpreter.getStandardOutput(), interpreter.getStandardInput());
+        InputStream stdin = new Pretty(System.out, System.in);
 
         return new REPL(interpreter,
                 new MacroExpander(interpreter),
@@ -45,7 +45,7 @@ public final class REPL {
     }
 
     public static REPL fromFile(Path path, boolean verbose) throws IOException {
-        Interpreter interpreter = new Interpreter(REPL.class.getClassLoader(), System.in, System.out, System.err);
+        Interpreter interpreter = new Interpreter(REPL.class.getClassLoader());
 
         return new REPL(interpreter,
                 new MacroExpander(interpreter),
@@ -65,10 +65,10 @@ public final class REPL {
                 result = interpreter.evaluate(macroExpander.evaluate(parser.next()));
 
                 if (verbose) {
-                    interpreter.getStandardOutput().println(Inspector.inspect(result));
+                    System.out.println(Inspector.inspect(result));
                 }
             } catch (SException e) {
-                interpreter.getStandardError().println(e.getMessage());
+                System.err.println(e.getMessage());
             }
         }
         return result;
