@@ -1,5 +1,7 @@
 package slang;
 
+import slang.visitors.Inspector;
+
 /**
  * @author Antoine Chauvin
  */
@@ -51,6 +53,6 @@ public final class SAtom implements SFunction {
             return ((SMap) argument).get(this);
         }
 
-        throw new IllegalArgumentException(String.format("%s is not indexable", argument));
+        throw new SException(String.format("%s is not indexable", Inspector.inspect(argument)));
     }
 }
