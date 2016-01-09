@@ -45,6 +45,9 @@ public class Interpreter extends EvaluationContext implements Visitor<Object> {
 
     @Override
     public Object visitName(SName name) {
+        if (isJavaStaticFieldCall(name)) {
+            return doJavaStaticFieldCall(name);
+        }
         return read(name);
     }
 
@@ -165,7 +168,7 @@ public class Interpreter extends EvaluationContext implements Visitor<Object> {
     private boolean isJavaStaticFieldCall(SName functionName) {
         String string = functionName.toString();
 
-        int sep = string.indexOf('#');
+        int sep = string.indexOf('/');
         if (sep < 0) {
             return false;
         }
@@ -257,7 +260,7 @@ public class Interpreter extends EvaluationContext implements Visitor<Object> {
 
     private Object doJavaStaticFieldCall(SName functionName) {
         String string = functionName.toString();
-        int sep = string.indexOf('#');
+        int sep = string.indexOf('/');
         String className = string.substring(0, sep);
         String fieldName = string.substring(sep + 1);
 
