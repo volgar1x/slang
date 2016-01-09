@@ -79,7 +79,7 @@ Call Java APIs
 
 ```
 ;; static fields
-(println (java.lang.Math#PI))
+(println java.lang.Math/PI)
 
 ;; new instance & method call
 (let [builder (java.lang.StringBuilder.)]
@@ -90,7 +90,7 @@ Call Java APIs
 ;; static method calls
 (println (java.lang.Math/abs -1))
 (println (java.lang.Math/cos 3.14159))
-(println (java.lang.Math/log (* 10 (java.lang.Math#E))))
+(println (java.lang.Math/log (* 10 java.lang.Math/E)))
 ```
 
 Macros
